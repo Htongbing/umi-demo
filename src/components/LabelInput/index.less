@@ -1,0 +1,40 @@
+.label-input-container {
+  height: 50px;
+  padding: 14px 10px 0;
+  border: 1px solid #666;
+  border-radius: 4px;
+  position: relative;
+}
+
+.label-input-placeholder {
+  line-height: 1;
+  position: absolute;
+  top: 17px;
+  z-index: 1;
+  color: #ccc;
+  transition: all 0.3s linear;
+
+  &.top-placeholder {
+    padding: 0 5px;
+    background-color: #fff;
+    transform: translate(-9px, -24px) scale(0.8);
+  }
+}
+
+.label-input,
+.label-input :global(.ant-input) {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  line-height: 1;
+
+  &:global(.ant-input-password) {
+    position: relative;
+    top: -2px;
+  }
+  
+  &:focus,
+  &:global(.ant-input-affix-wrapper-focused) {
+    box-shadow: none;
+  }
+}

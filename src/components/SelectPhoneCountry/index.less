@@ -1,0 +1,31 @@
+.select-dial-code-option {
+  display: flex;
+  align-items: center;
+
+  .name,
+  .value {
+    margin-left: 10px;
+  }
+
+  .value.normal {
+    color: #aaa;
+  }
+}
+
+.select-phone-country {
+  &:global(.ant-select) {
+    width: auto;
+
+    :global(.ant-select-selector) {
+      min-width: 90px;
+    }
+  }
+
+  &-input {
+    flex: 1;
+  }
+
+  &-container {
+    display: flex;
+  }
+}
