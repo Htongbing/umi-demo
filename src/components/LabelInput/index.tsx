@@ -16,9 +16,14 @@ interface LabelInputProps {
 const LabelInput: React.FC<LabelInputProps> = ({ type, value, onChange, label }) => {
   const inputRef = useRef<Input | null>(null)
 
-  const props = { value, onChange, ref: inputRef, className: styles['label-input'] }
+  const props: {
+    value?: string,
+    onChange?: (value: React.ChangeEvent | string) => void,
+    ref: React.RefObject<Input>,
+    className: string
+  } = { value, onChange, ref: inputRef, className: styles['label-input'] }
 
-  let inputComponent: JSX.Element
+  let inputComponent: React.ReactNode
   let isTopLabel: boolean = !!value
 
   switch (type) {
@@ -26,8 +31,9 @@ const LabelInput: React.FC<LabelInputProps> = ({ type, value, onChange, label })
       inputComponent = <Input.Password {...props} />
       break
     case 'phone':
+      props.className = `${props.className} ${styles['select-phone']}`
       isTopLabel = !!value && codePhoneReg.test(value) && !!RegExp.$2
-      inputComponent = <SelectPhoneCountry {...props} />
+      inputComponent = <SelectPhoneCountry selectorContainerClassName={styles['selector-container']} {...props} />
       break
     default:
       inputComponent = <Input {...props} />

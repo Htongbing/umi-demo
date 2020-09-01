@@ -27,6 +27,7 @@
   border: 0;
   border-radius: 0;
   line-height: 1;
+  overflow: hidden;
 
   &:global(.ant-input-password) {
     position: relative;
@@ -36,5 +37,48 @@
   &:focus,
   &:global(.ant-input-affix-wrapper-focused) {
     box-shadow: none;
+  }
+}
+
+.label-input {
+  :global(.ant-select) {
+    height: 17px;
+    padding-right: 0;
+
+    &:global(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector) {
+      height: 17px;
+      padding-left: 0;
+      border: 0;
+      left: 11px;
+
+      :global(.ant-select-selection-search-input) {
+        height: 17px;
+        position: relative;
+        top: -3px;
+      }
+
+      :global(.ant-select-selection-search) {
+        left: 0;
+      }
+    }
+
+    &:global(.ant-select-single.ant-select-show-arrow .ant-select-selection-item) {
+      line-height: 17px;
+    }
+
+    :global(.ant-select-arrow) {
+      right: 0;
+    }
+  }
+
+  .selector-container:global(.ant-select) {
+    :global(.ant-select-selector) {
+      min-width: 79px;
+    }
+  }
+
+  &.select-phone {
+    position: relative;
+    top: 2px;
   }
 }

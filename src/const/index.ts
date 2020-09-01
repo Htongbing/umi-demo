@@ -1,1 +1,1 @@
-export const codePhoneReg: RegExp = /^(\w+\+\d+)-(\d*)$/
+export const codePhoneReg: RegExp = /^(\w+\+\d+)-(\w*)$/

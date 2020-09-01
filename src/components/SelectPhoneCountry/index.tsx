@@ -13,20 +13,22 @@ function OptionContent({ name, iso2, dialCode }: { name?: string, iso2: string, 
   </div>
 }
 
-const genarateOptions: Array<React.ReactNode> = countries.map(({name, iso2, dialCode}) => (
+const genarateOptions: Array<React.ReactNode> = countries.map(({name, iso2, dialCode}: { name: string, iso2: string, dialCode: string }): React.ReactNode => (
   <Select.Option key={name} value={`${iso2}+${dialCode}`} label={OptionContent({ iso2, dialCode })}>
     {OptionContent({ name, iso2, dialCode })}
   </Select.Option>
 ))
 
 interface SelectPhoneCountryProps {
+  className?: string,
+  selectorContainerClassName?: string,
   value?: string,
   onChange?: (value: string) => void
 }
 
-const SelectPhoneCountry: React.FC<SelectPhoneCountryProps> = ({ value, onChange }, inputRef) => {
-  let inputValue = ''
-  let selectCode = 'cn+86'
+const SelectPhoneCountry: React.ForwardRefRenderFunction<Input, SelectPhoneCountryProps> = ({ value, onChange, className, selectorContainerClassName }, inputRef: React.Ref<Input>) => {
+  let inputValue: string = ''
+  let selectCode: string = 'cn+86'
 
   const changeValue: (code: string, input: string) => void = (code, input) => onChange?.(`${code}-${input}`)
 
@@ -36,13 +38,13 @@ const SelectPhoneCountry: React.FC<SelectPhoneCountryProps> = ({ value, onChange
   }
 
   return (
-    <div className={styles['select-phone-country-container']}>
+    <div className={`${styles['select-phone-country-container']}${className ? ` ${className}` : ''}`}>
       <Input className={styles['select-phone-country-input']} ref={inputRef} value={inputValue} onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => changeValue(selectCode, ev.target.value)}></Input>
-      <Select className={styles['select-phone-country']} showSearch optionLabelProp="label" dropdownMatchSelectWidth={false} value={selectCode} onChange={(code: string): void => changeValue(code, inputValue)}>
+      <Select className={`${styles['select-phone-country']}${selectorContainerClassName ? ` ${selectorContainerClassName}` : ''}`} showSearch optionLabelProp="label" dropdownMatchSelectWidth={false} value={selectCode} onChange={(code: string): void => changeValue(code, inputValue)}>
         {genarateOptions}
       </Select>
     </div>
   )
 }
 
-export default forwardRef((props, ref) => SelectPhoneCountry(props, ref))
+export default forwardRef<Input, SelectPhoneCountryProps>(SelectPhoneCountry)
