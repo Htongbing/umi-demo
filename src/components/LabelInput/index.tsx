@@ -1,10 +1,11 @@
 import React, { useRef } from 'react'
 import styles from './index.less'
 import { Input } from 'antd'
+import classnames from 'classnames'
 import SelectPhoneCountry from '@/components/SelectPhoneCountry'
 import { codePhoneReg } from '@/const'
 
-type InputType = 'password' | 'phone' | undefined
+type InputType = 'password' | 'phone' | string | undefined
 
 interface LabelInputProps {
   type?: InputType,
@@ -19,7 +20,7 @@ const LabelInput: React.FC<LabelInputProps> = ({ type, value, onChange, label })
   const props: {
     value?: string,
     onChange?: (value: React.ChangeEvent | string) => void,
-    ref: React.RefObject<Input>,
+    ref: React.Ref<Input>,
     className: string
   } = { value, onChange, ref: inputRef, className: styles['label-input'] }
 
@@ -31,7 +32,7 @@ const LabelInput: React.FC<LabelInputProps> = ({ type, value, onChange, label })
       inputComponent = <Input.Password {...props} />
       break
     case 'phone':
-      props.className = `${props.className} ${styles['select-phone']}`
+      props.className = classnames(props.className, styles['select-phone'])
       isTopLabel = !!value && codePhoneReg.test(value) && !!RegExp.$2
       inputComponent = <SelectPhoneCountry selectorContainerClassName={styles['selector-container']} {...props} />
       break
@@ -41,7 +42,7 @@ const LabelInput: React.FC<LabelInputProps> = ({ type, value, onChange, label })
 
   return (
     <div className={styles['label-input-container']}>
-      <div className={`${styles['label-input-placeholder']}${isTopLabel ? ` ${styles['top-placeholder']}` : ''}`} tabIndex={1} onFocus={(): void => inputRef.current?.focus()}>{label}</div>
+      <div className={classnames(styles['label-input-placeholder'], { [styles['top-placeholder']]: isTopLabel })} tabIndex={1} onFocus={(): void => inputRef.current?.focus()}>{label}</div>
       {inputComponent}
     </div>
   )

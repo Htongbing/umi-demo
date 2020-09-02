@@ -1,9 +1,10 @@
 import React, { forwardRef } from 'react'
 import { Select, Input } from 'antd'
+import classnames from 'classnames'
 import countries from '@/const/countries.ts'
 import '@/assets/css/countries.less'
 import styles from './index.less'
-import { codePhoneReg } from '@/const'
+import { codePhoneReg, defaultPhoneCode } from '@/const'
 
 function OptionContent({ name, iso2, dialCode }: { name?: string, iso2: string, dialCode: string }): React.ReactNode {
   return <div className={styles['select-dial-code-option']}>
@@ -28,7 +29,7 @@ interface SelectPhoneCountryProps {
 
 const SelectPhoneCountry: React.ForwardRefRenderFunction<Input, SelectPhoneCountryProps> = ({ value, onChange, className, selectorContainerClassName }, inputRef: React.Ref<Input>) => {
   let inputValue: string = ''
-  let selectCode: string = 'cn+86'
+  let selectCode: string = defaultPhoneCode
 
   const changeValue: (code: string, input: string) => void = (code, input) => onChange?.(`${code}-${input}`)
 
@@ -38,9 +39,9 @@ const SelectPhoneCountry: React.ForwardRefRenderFunction<Input, SelectPhoneCount
   }
 
   return (
-    <div className={`${styles['select-phone-country-container']}${className ? ` ${className}` : ''}`}>
+    <div className={classnames(styles['select-phone-country-container'], className)}>
       <Input className={styles['select-phone-country-input']} ref={inputRef} value={inputValue} onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => changeValue(selectCode, ev.target.value)}></Input>
-      <Select className={`${styles['select-phone-country']}${selectorContainerClassName ? ` ${selectorContainerClassName}` : ''}`} showSearch optionLabelProp="label" dropdownMatchSelectWidth={false} value={selectCode} onChange={(code: string): void => changeValue(code, inputValue)}>
+      <Select className={classnames(styles['select-phone-country'], selectorContainerClassName)} showSearch optionLabelProp="label" dropdownMatchSelectWidth={false} value={selectCode} onChange={(code: string): void => changeValue(code, inputValue)}>
         {genarateOptions}
       </Select>
     </div>

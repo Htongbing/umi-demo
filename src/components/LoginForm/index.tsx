@@ -3,6 +3,7 @@ import styles from './index.less'
 import { Form, Button } from 'antd'
 import LabelInput from '@/components/LabelInput'
 import SelectPhoneCountry from '@/components/SelectPhoneCountry'
+import Username from '@/components/Username'
 
 interface LoginFormProps {
   title: string,
@@ -34,6 +35,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ title, onSubmit }) => {
         </Form.Item>
         <Form.Item name="phone2">
           <LabelInput label="手机号" type="phone" />
+        </Form.Item>
+        <Form.Item name="username">
+          <Username />
         </Form.Item>
         <Form.Item>
           <Button block size="large" type="primary" htmlType="submit" loading={loading}>{title}</Button>
