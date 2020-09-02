@@ -1,9 +1,10 @@
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import styles from './index.less'
 import { Input } from 'antd'
 import classnames from 'classnames'
 import SelectPhoneCountry from '@/components/SelectPhoneCountry'
 import { codePhoneReg } from '@/const'
+import { useUpdate } from '@/utils/hooks'
 
 type InputType = 'password' | 'phone' | string | undefined
 
@@ -39,6 +40,8 @@ const LabelInput: React.FC<LabelInputProps> = ({ type, value, onChange, label })
     default:
       inputComponent = <Input {...props} />
   }
+
+  useUpdate((): void => inputRef.current?.focus(), [type])
 
   return (
     <div className={styles['label-input-container']}>

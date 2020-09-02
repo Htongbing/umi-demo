@@ -13,7 +13,7 @@ const Username: React.FC<UsernameProps> = props => {
   const { value, onChange } = props
   const [type, setType] = useState<string>('')
 
-  useEffect(() => {
+  useEffect((): void => {
     if (value) {
       if (!type && isNumber.test(value)) {
         setType('phone')
