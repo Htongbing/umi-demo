@@ -1,34 +1,33 @@
-import React, { useState } from 'react'
-import styles from './index.less'
-import { Form, Button } from 'antd'
-import LabelInput from '@/components/LabelInput'
-import SelectPhoneCountry from '@/components/SelectPhoneCountry'
-import Username from '@/components/Username'
+import React, { useState } from 'react';
+import styles from './index.less';
+import { Form, Button } from 'antd';
+import LabelInput from '@/components/LabelInput';
+import SelectPhoneCountry from '@/components/SelectPhoneCountry';
+import Username from '@/components/Username';
 
 interface LoginFormProps {
-  title: string,
-  config: object,
-  onSubmit: (data: object) => Promise<void>
+  title: string;
+  config: object;
+  onSubmit: (data: object) => Promise<void>;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ title, onSubmit }) => {
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onFinish: (data: object) => void = data => {
-    setLoading(true)
-    onSubmit(data)
-      .finally(() => setLoading(false))
-  }
+    setLoading(true);
+    onSubmit(data).finally(() => setLoading(false));
+  };
 
   return (
     <div className={styles['login-form-container']}>
       <div className={styles['login-form-title']}>{title}</div>
-      <Form onFinish={onFinish}>
+      <Form className={styles['login-form']} onFinish={onFinish}>
         <Form.Item name="email">
-          <LabelInput label="邮箱" />
+          <LabelInput label="Email" />
         </Form.Item>
         <Form.Item name="password">
-          <LabelInput label="密码" type="password" />
+          <LabelInput label="Password" type="password" />
         </Form.Item>
         <Form.Item name="phone">
           <SelectPhoneCountry></SelectPhoneCountry>
@@ -40,11 +39,19 @@ const LoginForm: React.FC<LoginFormProps> = ({ title, onSubmit }) => {
           <Username />
         </Form.Item>
         <Form.Item>
-          <Button block size="large" type="primary" htmlType="submit" loading={loading}>{title}</Button>
+          <Button
+            className={styles['login-form-button']}
+            block
+            size="large"
+            htmlType="submit"
+            loading={loading}
+          >
+            {title}
+          </Button>
         </Form.Item>
       </Form>
     </div>
-  )
-}
+  );
+};
 
-export default LoginForm
+export default LoginForm;

@@ -1,7 +1,9 @@
 .label-input-container {
+  display: flex;
+  align-items: center;
   height: 50px;
-  padding: 14px 10px 0;
-  border: 1px solid #666;
+  padding: 10px 14px;
+  border: 1px solid #d9d9d9;
   border-radius: 4px;
   position: relative;
 }
@@ -9,15 +11,16 @@
 .label-input-placeholder {
   line-height: 1;
   position: absolute;
-  top: 17px;
+  top: 50%;
+  margin-top: -8px;
   z-index: 1;
-  color: #ccc;
-  transition: all 0.3s linear;
+  font-size: 16px;
+  color: #595959;
+  transition: transform 0.3s linear;
+  transform-origin: left;
 
   &.top-placeholder {
-    padding: 0 5px;
-    background-color: #fff;
-    transform: translate(-9px, -24px) scale(0.8);
+    transform: translateY(-10px) scale(0.75);
   }
 }
 
@@ -27,13 +30,7 @@
   border: 0;
   border-radius: 0;
   line-height: 1;
-  overflow: hidden;
 
-  &:global(.ant-input-password) {
-    position: relative;
-    top: -2px;
-  }
-  
   &:focus,
   &:global(.ant-input-affix-wrapper-focused) {
     box-shadow: none;
@@ -41,11 +38,16 @@
 }
 
 .label-input {
+  &.input-ing {
+    transform: translateY(10px);
+  }
+
   :global(.ant-select) {
     height: 17px;
     padding-right: 0;
 
-    &:global(.ant-select-single:not(.ant-select-customize-input) .ant-select-selector) {
+    &:global(.ant-select-single:not(.ant-select-customize-input)
+        .ant-select-selector) {
       height: 17px;
       padding-left: 0;
       border: 0;
@@ -62,7 +64,8 @@
       }
     }
 
-    &:global(.ant-select-single.ant-select-show-arrow .ant-select-selection-item) {
+    &:global(.ant-select-single.ant-select-show-arrow
+        .ant-select-selection-item) {
       line-height: 17px;
     }
 

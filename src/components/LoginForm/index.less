@@ -1,11 +1,38 @@
-.login-form-container {
-  width: 400px;
-  margin: 20px auto;
-}
-
-.login-form-title {
-  margin-bottom: 20px;
-  text-align: center;
-  font-size: 28px;
-  font-weight: 700;
+.login-form {
+  &:global(.ant-form) {
+    :global(.ant-form-item) {
+      margin-bottom: 16px;
+    }
+  }
+  &-container {
+    width: 433px;
+    margin: 20px auto;
+  }
+  &-title {
+    margin-bottom: 26px;
+    line-height: 37px;
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: #000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+      'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  }
+  &-button {
+    &:global(.ant-btn-lg) {
+      height: 50px;
+      padding: 0;
+      border-radius: 0;
+    }
+    &:global(.ant-btn) {
+      border: 0;
+      box-shadow: none;
+      background-color: #000;
+      color: #fff;
+    }
+    &[ant-click-animating-without-extra-node='true']::after {
+      animation: none;
+    }
+  }
 }
