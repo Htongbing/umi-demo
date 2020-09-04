@@ -49,8 +49,8 @@ export const ADMIN_FORM = {
 }
 
 export const FORM_TYPE = {
-  signIn: 'SignIn',
-  signUp: 'SignUp'
+  signIn: 'Sign In',
+  signUp: 'Sign Up'
 }
 
 export const MEMBER_FORM_TYPE = {

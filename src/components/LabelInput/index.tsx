@@ -3,9 +3,10 @@ import styles from './index.less';
 import { Input } from 'antd';
 import classnames from 'classnames';
 import SelectPhoneCountry from '@/components/SelectPhoneCountry';
+import SendCode from '@/components/SendCode'
 import { useUpdate } from '@/utils/hooks';
 
-type InputType = 'password' | 'phone' | string | undefined;
+type InputType = 'password' | 'phone' | 'code' | string | undefined;
 
 interface LabelInputProps {
   type?: InputType;
@@ -48,6 +49,9 @@ const LabelInput: React.FC<LabelInputProps> = ({
         />
       );
       break;
+    case 'code':
+      inputComponent = <SendCode {...props}/>
+      break
     default:
       inputComponent = <Input {...props} />;
   }

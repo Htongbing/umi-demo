@@ -5,9 +5,9 @@ import { history } from 'umi'
 import { getMemberFormConfig } from '@/utils'
 
 export default (): React.ReactNode => {
-  const { type, mode } = history.location.query
+  const { type, mode, verify } = history.location.query
 
-  const config: Array<FormConfig> = getMemberFormConfig(mode)
+  const config: Array<FormConfig> = getMemberFormConfig(mode, !!verify)
 
   const onSubmit: (data: object) => Promise<void> = data => {
     console.log(data)
