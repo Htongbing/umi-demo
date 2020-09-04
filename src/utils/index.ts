@@ -20,3 +20,15 @@ export const getMemberFormConfig: (mode: MemberFormType, verify: boolean) => Arr
     }
   ] : []
 ]
+
+export const getMemberResetFormConfig: (mode: MemberFormType) => Array<FormConfig> = mode => [
+  {
+    ...MEMBER_FORM_TYPE[mode],
+    type: mode
+  },
+  {
+    label: 'Verification Code',
+    name: 'code',
+    type: 'code'
+  }
+]

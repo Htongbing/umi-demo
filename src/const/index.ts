@@ -49,8 +49,8 @@ export const ADMIN_FORM = {
 }
 
 export const FORM_TYPE = {
-  signIn: 'Sign In',
-  signUp: 'Sign Up'
+  signIn: 'SignIn',
+  signUp: 'SignUp'
 }
 
 export const MEMBER_FORM_TYPE = {
@@ -84,3 +84,29 @@ export const DASH_SIGN_IN: Array<FormConfig> = [
 export const DASH_FORM = {
   signIn: DASH_SIGN_IN
 }
+
+export const RESET_FORM: Array<FormConfig> = [
+  {
+    label: 'Password',
+    name: 'password',
+    type: 'password'
+  },
+  {
+    label: 'Confirm Password',
+    name: 'confirmPassword',
+    type: 'password'
+  }
+]
+
+export const VERIFICATION_FORM: Array<FormConfig> = [
+  {
+    label: 'Email',
+    name: 'email',
+    type: 'email'
+  },
+  {
+    label: 'Verification Code',
+    name: 'code',
+    type: 'code'
+  }
+]

@@ -12,6 +12,7 @@ export default defineConfig({
     { path: '/login', component: '@/pages/login' },
     { path: '/admin', component: '@/pages/admin' },
     { path: '/member', component: '@/pages/member' },
-    { path: '/dash', component: '@/pages/dash' }
+    { path: '/dash', component: '@/pages/dash' },
+    { path: '/reset', component: '@/pages/reset' }
   ],
 });
