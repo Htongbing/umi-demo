@@ -11,6 +11,7 @@ export default defineConfig({
     { path: '/', component: '@/pages/index' },
     { path: '/login', component: '@/pages/login' },
     { path: '/admin', component: '@/pages/admin' },
-    { path: '/member', component: '@/pages/member' }
+    { path: '/member', component: '@/pages/member' },
+    { path: '/dash', component: '@/pages/dash' }
   ],
 });

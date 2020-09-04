@@ -10,11 +10,6 @@ export interface FormConfig {
   type?: string
 }
 
-export interface FormTypeMap {
-  signIn: Array<FormConfig>,
-  signUp: Array<FormConfig>
-}
-
 export type MemberFormType = 'email' | 'phone' | 'username'
 
 export const ADMIN_SIGN_IN: Array<FormConfig> = [
@@ -48,7 +43,7 @@ export const ADMIN_SIGN_UP: Array<FormConfig> = [
   }
 ]
 
-export const ADMIN_FORM: FormTypeMap = {
+export const ADMIN_FORM = {
   signIn: ADMIN_SIGN_IN,
   signUp: ADMIN_SIGN_UP
 }
@@ -71,4 +66,21 @@ export const MEMBER_FORM_TYPE = {
     label: 'Email/Phone',
     name: 'username'
   }
+}
+
+export const DASH_SIGN_IN: Array<FormConfig> = [
+  {
+    label: 'Email',
+    name: 'email',
+    type: 'email'
+  },
+  {
+    label: 'Password',
+    name: 'password',
+    type: 'password'
+  }
+]
+
+export const DASH_FORM = {
+  signIn: DASH_SIGN_IN
 }
