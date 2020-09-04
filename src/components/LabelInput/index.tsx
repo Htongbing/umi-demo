@@ -1,9 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import styles from './index.less';
 import { Input } from 'antd';
 import classnames from 'classnames';
 import SelectPhoneCountry from '@/components/SelectPhoneCountry';
-import { codePhoneReg } from '@/const';
 import { useUpdate } from '@/utils/hooks';
 
 type InputType = 'password' | 'phone' | string | undefined;
@@ -12,7 +11,7 @@ interface LabelInputProps {
   type?: InputType;
   value?: string;
   onChange?: (value: React.ChangeEvent | string) => void;
-  label: string;
+  label?: string;
 }
 
 const LabelInput: React.FC<LabelInputProps> = ({
@@ -57,15 +56,17 @@ const LabelInput: React.FC<LabelInputProps> = ({
 
   return (
     <div className={styles['label-input-container']}>
-      <div
-        className={classnames(styles['label-input-placeholder'], {
-          [styles['top-placeholder']]: inputing,
-        })}
-        tabIndex={1}
-        onFocus={(): void => inputRef.current?.focus()}
-      >
-        {label}
-      </div>
+      {
+        !!label && <div
+          className={classnames(styles['label-input-placeholder'], {
+            [styles['top-placeholder']]: inputing,
+          })}
+          tabIndex={1}
+          onFocus={(): void => inputRef.current?.focus()}
+        >
+          {label}
+        </div>
+      }
       {inputComponent}
     </div>
   );

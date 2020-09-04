@@ -5,6 +5,7 @@ import { codePhoneReg, defaultPhoneCode } from '@/const'
 const isNumber: RegExp = /^(\d+)$/
 
 interface UsernameProps {
+  label?: string,
   value?: string,
   onChange?: (value: React.ChangeEvent | string) => void
 }
@@ -25,7 +26,7 @@ const Username: React.FC<UsernameProps> = props => {
     }
   }, [value])
 
-  return <LabelInput label="邮箱/手机号" type={type} {...props} />
+  return <LabelInput type={type} {...props} />
 }
 
 export default Username
