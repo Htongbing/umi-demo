@@ -31,7 +31,7 @@ const LabelInput: React.FC<LabelInputProps> = ({
   } = { value, onChange, ref: inputRef, className: styles['label-input'] };
 
   let inputComponent: React.ReactNode;
-  let inputing: boolean = !!value;
+  let inputing: boolean = type === 'phone' || !!value;
 
   props.className = classnames(props.className, {
     [styles['input-ing']]: inputing,
@@ -42,8 +42,6 @@ const LabelInput: React.FC<LabelInputProps> = ({
       inputComponent = <Input.Password {...props} />;
       break;
     case 'phone':
-      props.className = classnames(props.className, styles['select-phone']);
-      inputing = !!value && codePhoneReg.test(value) && !!RegExp.$2;
       inputComponent = (
         <SelectPhoneCountry
           selectorContainerClassName={styles['selector-container']}

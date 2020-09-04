@@ -40,10 +40,10 @@ const SelectPhoneCountry: React.ForwardRefRenderFunction<Input, SelectPhoneCount
 
   return (
     <div className={classnames(styles['select-phone-country-container'], className)}>
-      <Input className={styles['select-phone-country-input']} ref={inputRef} value={inputValue} onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => changeValue(selectCode, ev.target.value)}></Input>
       <Select className={classnames(styles['select-phone-country'], selectorContainerClassName)} showSearch optionLabelProp="label" dropdownMatchSelectWidth={false} value={selectCode} onChange={(code: string): void => changeValue(code, inputValue)}>
         {genarateOptions}
       </Select>
+      <Input className={styles['select-phone-country-input']} ref={inputRef} value={inputValue} onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => changeValue(selectCode, ev.target.value)}></Input>
     </div>
   )
 }
