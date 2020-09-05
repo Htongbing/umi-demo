@@ -5,14 +5,25 @@ import { history } from 'umi'
 import { getMemberResetFormConfig } from '@/utils'
 
 const Reset: React.FC = () => {
-  const { type, mode } = history.location.query
+  const { type, mode, uid } = history.location.query
 
-  const [username, setUserName] = useState<string>('')
+  const [username, setUsername] = useState<string>('')
 
-  const config: Array<FormConfig> = type === 'member' ? getMemberResetFormConfig(mode) : VERIFICATION_FORM
+  let config: Array<FormConfig> = []
+
+  if (uid) {
+    config = [{
+      label: 'Verification Code',
+      name: 'code',
+      type: 'code'
+    }]
+  } else {
+    config = type === 'member' ? getMemberResetFormConfig(mode) : VERIFICATION_FORM
+  }
+
   const onSubmit: (data: { username?: string }) => Promise<void> = data => {
     console.log(data)
-    setUserName(data.username || '')
+    setUsername(uid ? uid : data.username || '')
     return new Promise(resolve => setTimeout(resolve, 1000))
   }
 
