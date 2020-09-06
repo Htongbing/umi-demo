@@ -1,25 +1,27 @@
 import React, { useState } from 'react';
 import styles from './index.less';
+import { FormConfig, LoginFormProps } from '@/const';
+
 import { Form, Button } from 'antd';
 import LabelInput from '@/components/LabelInput';
 import Username from '@/components/Username';
-import { FormConfig } from '@/const'
 
-interface LoginFormProps {
-  buttonText: string,
-  config: Array<FormConfig>;
-  onSubmit: (data: object) => Promise<void>;
-}
+const generateFormItem = (config: Array<FormConfig>) =>
+  config.map(item => (
+    <Form.Item key={item.name} name={item.name}>
+      {item.type === 'username' ? (
+        <Username label={item.label} />
+      ) : (
+        <LabelInput label={item.label} type={item.type} />
+      )}
+    </Form.Item>
+  ));
 
-const generateFormItem = (config: Array<FormConfig>) => config.map(item => (
-  <Form.Item key={item.name} name={item.name}>
-    {
-      item.type === 'username' ? <Username label={item.label} /> : <LabelInput label={item.label} type={item.type} />
-    }
-  </Form.Item>
-))
-
-const LoginForm: React.FC<LoginFormProps> = ({ buttonText, onSubmit, config }) => {
+const LoginForm: React.FC<LoginFormProps> = ({
+  buttonText,
+  onSubmit,
+  config,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const onFinish: (data: object) => void = data => {

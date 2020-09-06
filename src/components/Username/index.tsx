@@ -1,32 +1,38 @@
-import React, { useState, useEffect } from 'react'
-import LabelInput from '../LabelInput'
-import { codePhoneReg, defaultPhoneCode } from '@/const'
+import React, { useState, useEffect } from 'react';
+import LabelInput from '../LabelInput';
+import {
+  codePhoneReg,
+  defaultPhoneCode,
+  FormItemProps,
+  LabelInputType,
+} from '@/const';
 
-const isNumber: RegExp = /^(\d+)$/
+const isNumberReg: RegExp = /^(\d+)$/;
 
-interface UsernameProps {
-  label?: string,
-  value?: string,
-  onChange?: (value: React.ChangeEvent | string) => void
+interface UsernameProps extends FormItemProps {
+  label?: string;
 }
 
 const Username: React.FC<UsernameProps> = props => {
-  const { value, onChange } = props
-  const [type, setType] = useState<string>('')
+  const { value, onChange } = props;
+  const [type, setType] = useState<LabelInputType>();
 
   useEffect((): void => {
     if (value) {
-      if (!type && isNumber.test(value)) {
-        setType('phone')
-        onChange?.(`${defaultPhoneCode}-${value}`)
-      } else if (type && !isNumber.test(codePhoneReg.exec(value)?.[2] || '')) {
-        setType('')
-        onChange?.(RegExp.$2)
+      if (!type && isNumberReg.test(value)) {
+        setType('phone');
+        onChange?.(`${defaultPhoneCode}-${value}`);
+      } else if (
+        type &&
+        !isNumberReg.test(codePhoneReg.exec(value)?.[2] || '')
+      ) {
+        setType(undefined);
+        onChange?.(RegExp.$2);
       }
     }
-  }, [value])
+  }, [value]);
 
-  return <LabelInput type={type} {...props} />
-}
+  return <LabelInput type={type} {...props} />;
+};
 
-export default Username
+export default Username;

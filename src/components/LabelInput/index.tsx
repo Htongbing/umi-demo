@@ -1,17 +1,15 @@
 import React, { useRef } from 'react';
 import styles from './index.less';
-import { Input } from 'antd';
 import classnames from 'classnames';
-import SelectPhoneCountry from '@/components/SelectPhoneCountry';
-import SendCode from '@/components/SendCode'
+import { LabelInputType, FormItemProps } from '@/const';
 import { useUpdate } from '@/utils/hooks';
 
-type InputType = 'password' | 'phone' | 'code' | string | undefined;
+import { Input } from 'antd';
+import SelectPhoneCountry from '@/components/SelectPhoneCountry';
+import SendCode from '@/components/SendCode';
 
-interface LabelInputProps {
-  type?: InputType;
-  value?: string;
-  onChange?: (value: React.ChangeEvent | string) => void;
+interface LabelInputProps extends FormItemProps {
+  type?: LabelInputType;
   label?: string;
 }
 
@@ -50,8 +48,8 @@ const LabelInput: React.FC<LabelInputProps> = ({
       );
       break;
     case 'code':
-      inputComponent = <SendCode {...props}/>
-      break
+      inputComponent = <SendCode {...props} />;
+      break;
     default:
       inputComponent = <Input {...props} />;
   }
@@ -60,8 +58,8 @@ const LabelInput: React.FC<LabelInputProps> = ({
 
   return (
     <div className={styles['label-input-container']}>
-      {
-        !!label && <div
+      {!!label && (
+        <div
           className={classnames(styles['label-input-placeholder'], {
             [styles['top-placeholder']]: inputing,
           })}
@@ -70,7 +68,7 @@ const LabelInput: React.FC<LabelInputProps> = ({
         >
           {label}
         </div>
-      }
+      )}
       {inputComponent}
     </div>
   );

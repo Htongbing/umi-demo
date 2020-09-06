@@ -1,55 +1,37 @@
-import React, { useState, useEffect } from 'react'
-import LoginForm from '@/components/LoginForm'
-import { FormConfig, RESET_FORM, VERIFICATION_FORM } from '@/const'
-import { history } from 'umi'
-import { getMemberResetFormConfig } from '@/utils'
+import React, { useState } from 'react';
+import { history } from 'umi';
+import { LoginFormProps } from '@/const';
+import {
+  getMemberResetFormProps,
+  getAdminResetFormProps,
+  getDashResetFormProps,
+  getResetFormConfig,
+} from '@/utils';
 
-const Reset: React.FC = () => {
-  const { type, mode, uid } = history.location.query
+import LoginForm from '@/components/LoginForm';
 
-  const [username, setUsername] = useState<string>('')
+export default function Reset(): React.ReactNode {
+  const { type, mode, userId } = history.location.query;
 
-  let config: Array<FormConfig> = []
+  const [isVerify, setIsVerify] = useState<boolean>(false);
 
-  if (uid) {
-    config = [{
-      label: 'Verification Code',
-      name: 'code',
-      type: 'code'
-    }]
-  } else {
-    config = type === 'member' ? getMemberResetFormConfig(mode) : VERIFICATION_FORM
+  let props: LoginFormProps | null = null;
+
+  const onSubmit: () => Promise<void> = () =>
+    new Promise(resolve => {
+      setIsVerify(true);
+      resolve();
+    });
+
+  if (type === 'member') {
+    props = getMemberResetFormProps(mode, onSubmit);
+  } else if (type === 'admin') {
+    props = getAdminResetFormProps(onSubmit);
+  } else if (type === 'dash') {
+    props = getDashResetFormProps(onSubmit);
   }
 
-  const onSubmit: (data: { username?: string }) => Promise<void> = data => {
-    console.log(data)
-    setUsername(uid ? uid : data.username || '')
-    return new Promise(resolve => setTimeout(resolve, 1000))
-  }
+  props && isVerify && (props.config = getResetFormConfig());
 
-  const [props, setProps] = useState<{
-    config: Array<FormConfig>,
-    onSubmit: (data: object) => Promise<void>,
-    buttonText: string
-  }>({
-    config,
-    onSubmit,
-    buttonText: 'Confirm'
-  })
-
-  useEffect(() => {
-    if (username) {
-      setProps({
-        config: RESET_FORM,
-        onSubmit,
-        buttonText: 'Reset'
-      })
-    }
-  }, [username])
-
-  return (
-    <LoginForm {...props}></LoginForm>
-  )
+  return props && <LoginForm {...props} />;
 }
-
-export default Reset

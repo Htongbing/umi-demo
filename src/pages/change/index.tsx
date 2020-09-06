@@ -1,49 +1,28 @@
-import React, { useState, useEffect } from 'react'
-import LoginForm from '@/components/LoginForm'
-import { FormConfig } from '@/const'
-import { getMemberResetFormConfig } from '@/utils'
-import { history } from 'umi'
+import React, { useState } from 'react';
+import { history } from 'umi';
+import { LoginFormProps } from '@/const';
+import { getMemberChangeFormProps, getChangeFormConfig } from '@/utils';
 
-const Reset: React.FC = () => {
-  const { mode } = history.location.query
+import LoginForm from '@/components/LoginForm';
 
-  const [isVerify, setIsVerify] = useState<boolean>(false)
+export default function Change(): React.ReactNode {
+  const { type, mode, userId } = history.location.query;
 
-  const onSubmit: (data: { username?: string }) => Promise<void> = data => {
-    console.log(data)
-    setIsVerify(true)
-    return new Promise(resolve => setTimeout(resolve, 1000))
+  const [isVerify, setIsVerify] = useState<boolean>(false);
+
+  let props: LoginFormProps | null = null;
+
+  const onSubmit: () => Promise<void> = () =>
+    new Promise(resolve => {
+      setIsVerify(true);
+      resolve();
+    });
+
+  if (type === 'member') {
+    props = getMemberChangeFormProps(onSubmit);
   }
 
-  const [props, setProps] = useState<{
-    config: Array<FormConfig>,
-    onSubmit: (data: object) => Promise<void>,
-    buttonText: string
-  }>({
-    config: [
-      {
-        label: 'Password',
-        name: 'password',
-        type: 'password'
-      }
-    ],
-    onSubmit,
-    buttonText: 'Confirm'
-  })
+  props && isVerify && (props.config = getChangeFormConfig(mode));
 
-  useEffect(() => {
-    if (isVerify) {
-      setProps({
-        config: getMemberResetFormConfig(mode),
-        onSubmit,
-        buttonText: 'Confirm'
-      })
-    }
-  }, [isVerify])
-
-  return (
-    <LoginForm {...props}></LoginForm>
-  )
+  return props && <LoginForm {...props} />;
 }
-
-export default Reset
