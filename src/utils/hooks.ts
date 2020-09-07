@@ -28,6 +28,8 @@ export const useGetLanguage: () => boolean = () => {
         signUp: '注册',
         signIn: '登录',
         confirm: '确定',
+        emailError: '请输入正确格式的邮箱',
+        phoneError: '请输入正确格式的手机号码'
       });
       setIsLoaded(true);
     });

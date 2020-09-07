@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import styles from './index.less';
 import classnames from 'classnames';
 import countries from '@/const/countries.ts';
-import { codePhoneReg, defaultPhoneCode, FormItemProps } from '@/const';
+import { CODE_PHONE_PATTERN, defaultPhoneCode, FormItemProps } from '@/const';
 import '@/assets/css/countries.less';
 
 import { Select, Input } from 'antd';
@@ -65,8 +65,8 @@ const SelectPhoneCountry: React.ForwardRefRenderFunction<
   const changeValue: (code: string, input: string) => void = (code, input) =>
     onChange?.(`${code}-${input}`);
 
-  if (value && codePhoneReg.test(value)) {
-    inputValue = RegExp.$2;
+  if (value && CODE_PHONE_PATTERN.test(value)) {
+    inputValue = RegExp.$3;
     selectCode = RegExp.$1;
   }
 

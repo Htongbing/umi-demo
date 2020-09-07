@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import LabelInput from '../LabelInput';
 import {
-  codePhoneReg,
+  CODE_PHONE_PATTERN,
   defaultPhoneCode,
   FormItemProps,
   LabelInputType,
@@ -24,10 +24,10 @@ const Username: React.FC<UsernameProps> = props => {
         onChange?.(`${defaultPhoneCode}-${value}`);
       } else if (
         type &&
-        !isNumberReg.test(codePhoneReg.exec(value)?.[2] || '')
+        !isNumberReg.test(CODE_PHONE_PATTERN.exec(value)?.[3] || '')
       ) {
         setType(undefined);
-        onChange?.(RegExp.$2);
+        onChange?.(RegExp.$3);
       }
     }
   }, [value]);

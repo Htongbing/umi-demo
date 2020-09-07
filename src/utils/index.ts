@@ -1,10 +1,35 @@
-import { FormConfig, LoginFormProps, LANGUAGE_KEY } from '@/const';
+import { FormConfig, LoginFormProps, LANGUAGE_KEY, CODE_PHONE_PATTERN, INTERNATIONAL_PHONE_PATTERN, EMAIL_PATTERN } from '@/const';
+
+export const phoneNumberValidator: (rule: any, value: string) => Promise<void> = (rule, value) => {
+  return new Promise((resolve, reject) => {
+    if (CODE_PHONE_PATTERN.test(value) && INTERNATIONAL_PHONE_PATTERN.test(`${RegExp.$2}${RegExp.$3}`)) {
+      return resolve()
+    }
+    return reject(LANGUAGE_KEY.phoneError)
+  })
+}
+
+export const emailValidator: (rule: any, value: string) => Promise<void> = (rule, value) => new Promise((resolve, reject) => EMAIL_PATTERN.test(value) ? resolve() : reject(LANGUAGE_KEY.emailError))
+
+export const usernameValidator: (rule: any, value: string) => Promise<void> = (rule, value) => {
+  if (CODE_PHONE_PATTERN.test(value) && RegExp.$3) {
+    return phoneNumberValidator(rule, value)
+  }
+  return emailValidator(rule, value)
+}
 
 export const getInputConfig: Record<string, () => FormConfig> = {
   email(): FormConfig {
     return {
       label: LANGUAGE_KEY.email,
       name: 'email',
+      rules: [
+        {
+          type: 'email',
+          required: true,
+          message: LANGUAGE_KEY.emailError
+        }
+      ]
     };
   },
   phone(): FormConfig {
@@ -12,6 +37,12 @@ export const getInputConfig: Record<string, () => FormConfig> = {
       label: LANGUAGE_KEY.phone,
       name: 'phone',
       type: 'phone',
+      rules: [
+        {
+          required: true,
+          validator: phoneNumberValidator
+        }
+      ]
     };
   },
   username(): FormConfig {
@@ -19,6 +50,12 @@ export const getInputConfig: Record<string, () => FormConfig> = {
       label: LANGUAGE_KEY.username,
       name: 'username',
       type: 'username',
+      rules: [
+        {
+          required: true,
+          validator: usernameValidator
+        }
+      ]
     };
   },
   password(): FormConfig {

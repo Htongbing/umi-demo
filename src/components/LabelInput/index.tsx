@@ -57,7 +57,7 @@ const LabelInput: React.FC<LabelInputProps> = ({
   useUpdate((): void => inputRef.current?.focus(), [type]);
 
   return (
-    <div className={styles['label-input-container']}>
+    <div className={classnames(styles['label-input-container'], 'label-input-container')}>
       {!!label && (
         <div
           className={classnames(styles['label-input-placeholder'], {

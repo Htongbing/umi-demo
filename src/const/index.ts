@@ -1,4 +1,8 @@
-export const codePhoneReg: RegExp = /^(\w+\+\d+)-(.*)$/;
+export const CODE_PHONE_PATTERN: RegExp = /^(\w+(\+\d+))-(.*)$/;
+
+export const INTERNATIONAL_PHONE_PATTERN = /^(?!\b(0)\1+\b)(\+?\d{1,3}[. -]?)?\(?\d{3}\)?([. -]?)\d{3}\3\d{4}$/
+
+export const EMAIL_PATTERN = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 
 export const defaultPhoneCode: string = 'cn+86';
 
@@ -13,6 +17,7 @@ export interface FormConfig {
   label: string;
   name: string;
   type?: LabelInputType | 'username';
+  rules?: any[]
 }
 
 export interface LoginFormProps {
@@ -36,4 +41,6 @@ export const LANGUAGE_KEY: Record<string, string> = {
   signUp: 'Sign Up',
   signIn: 'Sign In',
   confirm: 'Confirm',
+  emailError: 'Please enter the correct email',
+  phoneError: 'Please enter the correct phone number'
 };

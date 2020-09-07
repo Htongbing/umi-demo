@@ -8,7 +8,7 @@ import Username from '@/components/Username';
 
 const generateFormItem = (config: Array<FormConfig>) =>
   config.map(item => (
-    <Form.Item key={item.name} name={item.name}>
+    <Form.Item className={styles['login-form-item']} key={item.name} name={item.name} rules={item.rules}>
       {item.type === 'username' ? (
         <Username label={item.label} />
       ) : (
