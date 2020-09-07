@@ -2,26 +2,22 @@ import React from 'react';
 import { history } from 'umi';
 import { LoginFormProps } from '@/const';
 import { getMemberSignUpFormProps, getAdminSignUpFormProps } from '@/utils';
-import { useGetLanguage } from '@/utils/hooks';
 
+import GetData from '@/components/GetData'
 import LoginForm from '@/components/LoginForm';
 
-export default function SignUp(): React.ReactNode {
-  const isLoaded: boolean = useGetLanguage();
+function SignUp(): React.ReactNode {
+  const { type, mode, verify } = history.location.query;
 
-  if (isLoaded) {
-    const { type, mode, verify } = history.location.query;
+  let props: LoginFormProps | null = null;
 
-    let props: LoginFormProps | null = null;
-
-    if (type === 'member') {
-      props = getMemberSignUpFormProps(mode, !!verify);
-    } else if (type === 'admin') {
-      props = getAdminSignUpFormProps();
-    }
-
-    return props && <LoginForm {...props} />;
+  if (type === 'member') {
+    props = getMemberSignUpFormProps(mode, !!verify);
+  } else if (type === 'admin') {
+    props = getAdminSignUpFormProps();
   }
 
-  return null;
+  return props && <LoginForm {...props} />;
 }
+
+export default GetData(SignUp)

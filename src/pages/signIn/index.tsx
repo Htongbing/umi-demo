@@ -8,8 +8,9 @@ import {
 } from '@/utils';
 
 import LoginForm from '@/components/LoginForm';
+import GetData from '@/components/GetData';
 
-export default function SignIn(): React.ReactNode {
+function SignIn(): React.ReactNode {
   const { type, mode } = history.location.query;
 
   let props: LoginFormProps | null = null;
@@ -24,3 +25,5 @@ export default function SignIn(): React.ReactNode {
 
   return props && <LoginForm {...props} />;
 }
+
+export default GetData(SignIn)

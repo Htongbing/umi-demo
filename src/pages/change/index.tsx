@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { history } from 'umi';
-import { LoginFormProps } from '@/const';
+import { LoginFormProps, GetDataComponentProps } from '@/const';
 import { getMemberChangeFormProps, getChangeFormConfig } from '@/utils';
 
 import LoginForm from '@/components/LoginForm';
+import GetData from '@/components/GetData';
 
-export default function Change(): React.ReactNode {
+function Change({ isVerify, changeVerify }: GetDataComponentProps): React.ReactNode {
   const { type, mode, userId } = history.location.query;
-
-  const [isVerify, setIsVerify] = useState<boolean>(false);
 
   let props: LoginFormProps | null = null;
 
   const onSubmit: () => Promise<void> = () =>
     new Promise(resolve => {
-      setIsVerify(true);
+      changeVerify();
       resolve();
     });
 
@@ -26,3 +25,5 @@ export default function Change(): React.ReactNode {
 
   return props && <LoginForm {...props} />;
 }
+
+export default GetData(Change)

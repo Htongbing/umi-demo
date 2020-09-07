@@ -21,6 +21,11 @@ export interface LoginFormProps {
   onSubmit: (data: object) => Promise<void>;
 }
 
+export interface GetDataComponentProps extends Record<string, any> {
+  isVerify: boolean,
+  changeVerify: () => void
+}
+
 export const LANGUAGE_KEY: Record<string, string> = {
   email: 'Email',
   phone: 'Phone',
