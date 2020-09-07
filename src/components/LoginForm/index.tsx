@@ -25,13 +25,14 @@ const LoginForm: React.FC<LoginFormProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   const onFinish: (data: object) => void = data => {
+    console.log(data)
     setLoading(true);
     onSubmit(data).finally(() => setLoading(false));
   };
 
   return (
     <div className={styles['login-form-container']}>
-      <Form className={styles['login-form']} onFinish={onFinish}>
+      <Form className={styles['login-form']} onFinish={onFinish} onValuesChange={window.console.log}>
         {generateFormItem(config)}
         <Form.Item>
           <Button

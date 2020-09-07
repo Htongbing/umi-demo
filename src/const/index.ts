@@ -42,5 +42,7 @@ export const LANGUAGE_KEY: Record<string, string> = {
   signIn: 'Sign In',
   confirm: 'Confirm',
   emailError: 'Please enter the correct email',
-  phoneError: 'Please enter the correct phone number'
+  phoneError: 'Please enter the correct phone number',
+  send: 'Send Code',
+  resend: 'Resend'
 };

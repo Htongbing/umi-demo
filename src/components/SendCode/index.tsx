@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import styles from './index.less';
-import { FormItemProps } from '@/const';
+import { FormItemProps, LANGUAGE_KEY } from '@/const';
 
 import { Input, Button } from 'antd';
 
@@ -12,7 +12,7 @@ const SendCode: React.ForwardRefRenderFunction<Input, SendCodeProps> = (
 ) => {
   const [timing, setTiming] = useState<number>(0);
 
-  const text: string = timing ? `Resend (${timing})` : 'Send';
+  const text: string = timing ? `${LANGUAGE_KEY.resend} (${timing})` : LANGUAGE_KEY.send;
 
   const send: () => void = () => {
     setTiming(60);

@@ -29,7 +29,9 @@ export const useGetLanguage: () => boolean = () => {
         signIn: '登录',
         confirm: '确定',
         emailError: '请输入正确格式的邮箱',
-        phoneError: '请输入正确格式的手机号码'
+        phoneError: '请输入正确格式的手机号码',
+        send: '发送',
+        resend: '重新发送'
       });
       setIsLoaded(true);
     });
