@@ -63,6 +63,13 @@ export const getInputConfig: Record<string, (config?: ExtraFormConfig) => FormCo
       label: LANGUAGE_KEY.password,
       name: 'password',
       type: 'password',
+      rules: [
+        {
+          required: true,
+          pattern: /\w{8,}/i,
+          message: LANGUAGE_KEY.passwordError
+        }
+      ]
     };
   },
   code(config): FormConfig {
@@ -70,6 +77,12 @@ export const getInputConfig: Record<string, (config?: ExtraFormConfig) => FormCo
       label: LANGUAGE_KEY.code,
       name: 'code',
       type: 'code',
+      rules: [
+        {
+          required: true,
+          message: LANGUAGE_KEY.codeError
+        }
+      ],
       ...config
     };
   },

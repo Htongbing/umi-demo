@@ -55,6 +55,8 @@ export const LANGUAGE_KEY: Obj = {
   confirm: 'Confirm',
   emailError: 'Please enter the correct email',
   phoneError: 'Please enter the correct phone number',
+  codeError: 'Please enter the verification code',
+  passwordError: 'Please enter at least 8 character',
   send: 'Send Code',
   resend: 'Resend'
 };
