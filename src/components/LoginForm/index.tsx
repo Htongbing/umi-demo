@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styles from './index.less';
-import { FormConfig, LoginFormProps } from '@/const';
+import { FormConfig, LoginFormProps, Obj } from '@/const';
+import { FormInstance } from 'antd/es/form'
 
 import { Form, Button } from 'antd';
 import LabelInput from '@/components/LabelInput';
 import Username from '@/components/Username';
 
-const generateFormItem = (config: Array<FormConfig>) =>
+const generateFormItem = (config: Array<FormConfig>, formData: Obj, formInstance: FormInstance | null) =>
   config.map(item => (
     <Form.Item className={styles['login-form-item']} key={item.name} name={item.name} rules={item.rules}>
       {item.type === 'username' ? (
         <Username label={item.label} />
       ) : (
-        <LabelInput label={item.label} type={item.type} />
+        <LabelInput label={item.label} type={item.type} formData={formData} formInstance={formInstance} controlButtonFn={item.controlButtonFn} />
       )}
     </Form.Item>
   ));
@@ -23,6 +24,9 @@ const LoginForm: React.FC<LoginFormProps> = ({
   config,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [formData, setFormData] = useState<Obj>({})
+
+  const formRef = useRef<FormInstance>(null)
 
   const onFinish: (data: object) => void = data => {
     console.log(data)
@@ -32,8 +36,8 @@ const LoginForm: React.FC<LoginFormProps> = ({
 
   return (
     <div className={styles['login-form-container']}>
-      <Form className={styles['login-form']} onFinish={onFinish} onValuesChange={window.console.log}>
-        {generateFormItem(config)}
+      <Form className={styles['login-form']} ref={formRef} onFinish={onFinish} onValuesChange={(current: Obj, all: Obj): void => setFormData(all)}>
+        {generateFormItem(config, formData, formRef.current)}
         <Form.Item>
           <Button
             className={styles['login-form-button']}

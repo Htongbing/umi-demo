@@ -11,6 +11,7 @@ const SendCode: React.ForwardRefRenderFunction<Input, SendCodeProps> = (
   inputRef: React.Ref<Input>,
 ) => {
   const [timing, setTiming] = useState<number>(0);
+  const [disabled, setDisabled] = useState<boolean>(!!props.controlButtonFn)
 
   const text: string = timing ? `${LANGUAGE_KEY.resend} (${timing})` : LANGUAGE_KEY.send;
 
@@ -27,6 +28,19 @@ const SendCode: React.ForwardRefRenderFunction<Input, SendCodeProps> = (
     return () => clearTimeout(timer);
   });
 
+  const { formInstance, formData, controlButtonFn, ...rest } = props
+  
+  if (controlButtonFn) {
+    let controlTimer: number
+
+    useEffect(() => {
+      controlTimer = setTimeout(() => {
+        controlButtonFn(formInstance, setDisabled)
+      })
+      return () => clearTimeout(controlTimer)
+    }, [formData])
+  }
+
   return (
     <Input
       ref={inputRef}
@@ -34,13 +48,13 @@ const SendCode: React.ForwardRefRenderFunction<Input, SendCodeProps> = (
         <Button
           className={styles['send-code-btn']}
           type="link"
-          disabled={!!timing}
+          disabled={disabled || !!timing}
           onClick={send}
         >
           {text}
         </Button>
       }
-      {...props}
+      {...rest}
     />
   );
 };

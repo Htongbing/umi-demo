@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import styles from './index.less';
 import classnames from 'classnames';
-import { LabelInputType, FormItemProps } from '@/const';
+import { LabelInputType, FormItemProps, Obj } from '@/const';
 import { useUpdate } from '@/utils/hooks';
 
 import { Input } from 'antd';
@@ -18,6 +18,9 @@ const LabelInput: React.FC<LabelInputProps> = ({
   value,
   onChange,
   label,
+  formData,
+  formInstance,
+  controlButtonFn
 }) => {
   const inputRef = useRef<Input | null>(null);
 
@@ -48,7 +51,7 @@ const LabelInput: React.FC<LabelInputProps> = ({
       );
       break;
     case 'code':
-      inputComponent = <SendCode {...props} />;
+      inputComponent = <SendCode {...props} formData={formData} formInstance={formInstance} controlButtonFn={controlButtonFn} />;
       break;
     default:
       inputComponent = <Input {...props} />;

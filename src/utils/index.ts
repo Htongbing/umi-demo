@@ -1,4 +1,4 @@
-import { FormConfig, LoginFormProps, LANGUAGE_KEY, CODE_PHONE_PATTERN, INTERNATIONAL_PHONE_PATTERN, EMAIL_PATTERN } from '@/const';
+import { FormConfig, LoginFormProps, LANGUAGE_KEY, CODE_PHONE_PATTERN, INTERNATIONAL_PHONE_PATTERN, EMAIL_PATTERN, ExtraFormConfig, ControlButtonFn } from '@/const';
 
 export const phoneNumberValidator: (rule: any, value: string) => Promise<void> = (rule, value) => {
   return new Promise((resolve, reject) => {
@@ -18,7 +18,7 @@ export const usernameValidator: (rule: any, value: string) => Promise<void> = (r
   return emailValidator(rule, value)
 }
 
-export const getInputConfig: Record<string, () => FormConfig> = {
+export const getInputConfig: Record<string, (config?: ExtraFormConfig) => FormConfig> = {
   email(): FormConfig {
     return {
       label: LANGUAGE_KEY.email,
@@ -65,11 +65,12 @@ export const getInputConfig: Record<string, () => FormConfig> = {
       type: 'password',
     };
   },
-  code(): FormConfig {
+  code(config): FormConfig {
     return {
       label: LANGUAGE_KEY.code,
       name: 'code',
       type: 'code',
+      ...config
     };
   },
   repeatPassword(): FormConfig {
@@ -83,16 +84,34 @@ export const getInputConfig: Record<string, () => FormConfig> = {
 
 export const getInputConfigHelper: (...args: any[]) => Array<FormConfig> = (
   ...args
-) => args.filter(type => !!type).map(type => getInputConfig[type]());
+) => args.filter(type => !!type).map(typeObj => {
+  if (typeof typeObj === 'string') return getInputConfig[typeObj]()
+  const { type, ...args } = typeObj
+  return getInputConfig[type](args)
+});
 
 export const getMemberSignUpFormProps: (
   mode: FormConfig['type'],
   verify: boolean,
-) => LoginFormProps = (mode, verify) => ({
-  config: getInputConfigHelper(mode, 'password', verify && 'code'),
-  onSubmit: () => new Promise(resolve => resolve()),
-  buttonText: LANGUAGE_KEY.signUp,
-});
+) => LoginFormProps = (mode, verify) => {
+  let controlButtonFn: ControlButtonFn | undefined
+
+  if (mode && verify) {
+    controlButtonFn = (form, setDisabled) => {
+      form && setDisabled(!!form.getFieldError(mode).length)
+    }
+  }
+
+  return {
+    config: getInputConfigHelper(
+      mode, 
+      'password', 
+      verify && { type: 'code', controlButtonFn }
+    ),
+    onSubmit: () => new Promise(resolve => resolve()),
+    buttonText: LANGUAGE_KEY.signUp,
+  }
+};
 
 export const getAdminSignUpFormProps: () => LoginFormProps = () => ({
   config: getInputConfigHelper('email', 'password', 'phone'),
