@@ -7,4 +7,7 @@ export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
   },
+  // proxy: {
+  //   '/udb': 'http://www.baidu.com'
+  // }
 });

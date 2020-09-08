@@ -2,9 +2,11 @@ import { FormInstance } from 'antd/es/form'
 
 export const CODE_PHONE_PATTERN: RegExp = /^(\w+(\+\d+))-(.*)$/;
 
-export const INTERNATIONAL_PHONE_PATTERN = /^(?!\b(0)\1+\b)(\+?\d{1,3}[. -]?)?\(?\d{3}\)?([. -]?)\d{3}\3\d{4}$/
+export const INTERNATIONAL_PHONE_PATTERN: RegExp = /^(?!\b(0)\1+\b)(\+?\d{1,3}[. -]?)?\(?\d{3}\)?([. -]?)\d{3}\3\d{4}$/
 
-export const EMAIL_PATTERN = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+export const EMAIL_PATTERN: RegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+
+export const AXIOS_BASE_URL: string = '/udb'
 
 export const defaultPhoneCode: string = 'cn+86';
 
@@ -25,7 +27,8 @@ export interface FormConfig {
   name: string;
   type?: LabelInputType | 'username';
   rules?: any[],
-  controlButtonFn?: ControlButtonFn
+  controlButtonFn?: ControlButtonFn,
+  dependencies?: string[]
 }
 
 export type ExtraFormConfig = Record<keyof FormConfig, any>
@@ -57,6 +60,8 @@ export const LANGUAGE_KEY: Obj = {
   phoneError: 'Please enter the correct phone number',
   codeError: 'Please enter the verification code',
   passwordError: 'Please enter at least 8 character',
+  repeatPasswordError: 'The two passwords that you entered do not match',
+  repeatPasswordEmptyError: 'Please confirm your password',
   send: 'Send Code',
   resend: 'Resend'
 };

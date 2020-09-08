@@ -58,7 +58,7 @@ export const getInputConfig: Record<string, (config?: ExtraFormConfig) => FormCo
       ]
     };
   },
-  password(): FormConfig {
+  password(config): FormConfig {
     return {
       label: LANGUAGE_KEY.password,
       name: 'password',
@@ -69,7 +69,8 @@ export const getInputConfig: Record<string, (config?: ExtraFormConfig) => FormCo
           pattern: /\w{8,}/i,
           message: LANGUAGE_KEY.passwordError
         }
-      ]
+      ],
+      ...config
     };
   },
   code(config): FormConfig {
@@ -84,13 +85,6 @@ export const getInputConfig: Record<string, (config?: ExtraFormConfig) => FormCo
         }
       ],
       ...config
-    };
-  },
-  repeatPassword(): FormConfig {
-    return {
-      label: LANGUAGE_KEY.repeatPassword,
-      name: 'repeatPassword',
-      type: 'password',
     };
   },
 };
@@ -178,7 +172,26 @@ export const getDashResetFormProps: (
 });
 
 export const getResetFormConfig: () => Array<FormConfig> = () =>
-  getInputConfigHelper('password', 'repeatPassword');
+  getInputConfigHelper('password', {
+    type: 'password',
+    label: LANGUAGE_KEY.repeatPassword,
+    name: 'repeatPassword',
+    dependencies: ['password'],
+    rules: [
+      {
+        required: true,
+        message: LANGUAGE_KEY.repeatPasswordEmptyError
+      },
+      ({ getFieldValue }: { getFieldValue: any }) => ({
+        validator(rule: any, value: string | undefined): Promise<void> {
+          if (!value || getFieldValue('password') === value) {
+            return Promise.resolve()
+          }
+          return Promise.reject(LANGUAGE_KEY.repeatPasswordError)
+        }
+      })
+    ]
+  });
 
 export const getMemberChangeFormProps: (
   onSubmit: () => Promise<void>,

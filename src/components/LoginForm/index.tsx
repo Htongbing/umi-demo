@@ -9,7 +9,7 @@ import Username from '@/components/Username';
 
 const generateFormItem = (config: Array<FormConfig>, formData: Obj, formInstance: FormInstance | null) =>
   config.map(item => (
-    <Form.Item className={styles['login-form-item']} key={item.name} name={item.name} rules={item.rules}>
+    <Form.Item className={styles['login-form-item']} key={item.name} name={item.name} rules={item.rules} dependencies={item.dependencies}>
       {item.type === 'username' ? (
         <Username label={item.label} />
       ) : (
