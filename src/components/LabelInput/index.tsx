@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import styles from './index.less';
 import classnames from 'classnames';
 import { LabelInputType, FormItemProps, Obj } from '@/const';
@@ -23,13 +23,16 @@ const LabelInput: React.FC<LabelInputProps> = ({
   controlButtonFn
 }) => {
   const inputRef = useRef<Input | null>(null);
+  const [isFocus, setIsFocus] = useState<boolean>(false)
 
   const props: {
     value?: string;
     onChange?: (value: React.ChangeEvent | string) => void;
     ref: React.Ref<Input>;
     className: string;
-  } = { value, onChange, ref: inputRef, className: styles['label-input'] };
+    onFocus: () => void,
+    onBlur: () => void
+  } = { value, onChange, ref: inputRef, className: styles['label-input'], onFocus: () => setIsFocus(true), onBlur: () => setIsFocus(false) };
 
   let inputComponent: React.ReactNode;
   let inputing: boolean = type === 'phone' || !!value;
@@ -60,7 +63,7 @@ const LabelInput: React.FC<LabelInputProps> = ({
   useUpdate((): void => inputRef.current?.focus(), [type]);
 
   return (
-    <div className={classnames(styles['label-input-container'], 'label-input-container')}>
+    <div className={classnames(styles['label-input-container'], 'label-input-container', { [styles['is-focus']]: isFocus })}>
       {!!label && (
         <div
           className={classnames(styles['label-input-placeholder'], {
