@@ -20,7 +20,8 @@ const LabelInput: React.FC<LabelInputProps> = ({
   label,
   formData,
   formInstance,
-  controlButtonFn
+  controlButtonFn,
+  sendCallback
 }) => {
   const inputRef = useRef<Input | null>(null);
   const [isFocus, setIsFocus] = useState<boolean>(false)
@@ -54,7 +55,7 @@ const LabelInput: React.FC<LabelInputProps> = ({
       );
       break;
     case 'code':
-      inputComponent = <SendCode {...props} formData={formData} formInstance={formInstance} controlButtonFn={controlButtonFn} />;
+      inputComponent = <SendCode {...props} formData={formData} formInstance={formInstance} controlButtonFn={controlButtonFn} sendCallback={sendCallback} />;
       break;
     default:
       inputComponent = <Input {...props} />;

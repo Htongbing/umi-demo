@@ -13,7 +13,7 @@ const generateFormItem = (config: Array<FormConfig>, formData: Obj, formInstance
       {item.type === 'username' ? (
         <Username label={item.label} />
       ) : (
-        <LabelInput label={item.label} type={item.type} formData={formData} formInstance={formInstance} controlButtonFn={item.controlButtonFn} />
+        <LabelInput label={item.label} type={item.type} formData={formData} formInstance={formInstance} controlButtonFn={item.controlButtonFn} sendCallback={item.sendCallback} />
       )}
     </Form.Item>
   ));

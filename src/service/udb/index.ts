@@ -8,3 +8,5 @@ export const getAdminInitConfig: (params: UDBParams) => Promise<any> = params =>
 export const signUpMember: (params: UDBParams) => Promise<any> = params => axios.get('/reg/registermix/regcore.do', { params })
 
 export const signUpAdmin: (params: UDBParams) => Promise<any> = params => axios.get('/reg/registeradmin/regcore.do', { params })
+
+export const sendVerificationCode: (params: UDBParams) => Promise<any> = params => axios.get('/reg/register/sendverifycode.do', { params })

@@ -12,6 +12,8 @@ export const defaultPhoneCode: string = 'cn+86';
 
 export type ControlButtonFn = (form: FormInstance | null | undefined, setDisabled: React.Dispatch<React.SetStateAction<boolean>>) => void
 
+export type SendCallback = (formData: Obj) => void
+
 export type Obj = Record<string, string>
 
 export interface FormItemProps {
@@ -19,7 +21,8 @@ export interface FormItemProps {
   onChange?: (value: React.ChangeEvent | string) => void;
   formInstance?: FormInstance | null,
   formData?: Obj,
-  controlButtonFn?: ControlButtonFn
+  controlButtonFn?: ControlButtonFn,
+  sendCallback?: SendCallback
 }
 
 export type LabelInputType = 'password' | 'phone' | 'code';
@@ -30,7 +33,8 @@ export interface FormConfig {
   type?: LabelInputType | 'username';
   rules?: any[],
   controlButtonFn?: ControlButtonFn,
-  dependencies?: string[]
+  dependencies?: string[],
+  sendCallback?: SendCallback
 }
 
 export type ExtraFormConfig = Record<keyof FormConfig, any>
@@ -50,7 +54,8 @@ export interface UDBParams {
   appid: string,
   subappid?: string,
   callback?: string,
-  stoken?: string
+  stoken?: string,
+  acct?: string
 }
 
 export const LANGUAGE_KEY: Obj = {

@@ -15,10 +15,6 @@ const SendCode: React.ForwardRefRenderFunction<Input, SendCodeProps> = (
 
   const text: string = timing ? `${LANGUAGE_KEY.resend} (${timing})` : LANGUAGE_KEY.send;
 
-  const send: () => void = () => {
-    setTiming(60);
-  };
-
   let timer: number;
 
   useEffect(() => {
@@ -28,7 +24,12 @@ const SendCode: React.ForwardRefRenderFunction<Input, SendCodeProps> = (
     return () => clearTimeout(timer);
   });
 
-  const { formInstance, formData, controlButtonFn, ...rest } = props
+  const { formInstance, formData, controlButtonFn, sendCallback, ...rest } = props
+
+  const send: () => void = () => {
+    formData && sendCallback?.(formData)
+    setTiming(60);
+  };
   
   if (controlButtonFn) {
     let controlTimer: number

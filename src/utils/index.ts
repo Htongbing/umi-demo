@@ -1,5 +1,5 @@
-import { FormConfig, LoginFormProps, LANGUAGE_KEY, CODE_PHONE_PATTERN, INTERNATIONAL_PHONE_PATTERN, EMAIL_PATTERN, ExtraFormConfig, ControlButtonFn, UDBParams, Obj } from '@/const';
-import { signUpMember, signUpAdmin } from '@/service/udb'
+import { FormConfig, LoginFormProps, LANGUAGE_KEY, CODE_PHONE_PATTERN, INTERNATIONAL_PHONE_PATTERN, EMAIL_PATTERN, ExtraFormConfig, ControlButtonFn, UDBParams, Obj, SendCallback } from '@/const';
+import { signUpMember, signUpAdmin, sendVerificationCode } from '@/service/udb'
 
 declare const window: any
 
@@ -106,10 +106,18 @@ export const getMemberSignUpFormProps: (
   params: UDBParams
 ) => LoginFormProps = (mode, verify, params) => {
   let controlButtonFn: ControlButtonFn | undefined
+  let sendCallback: SendCallback | undefined
 
   if (mode && verify) {
     controlButtonFn = (form, setDisabled) => {
       form && setDisabled(!!form.getFieldError(mode).length)
+    }
+    sendCallback = formData => {
+      let acct = formData[mode]
+      if (CODE_PHONE_PATTERN.test(acct)) {
+        acct = `${RegExp.$2}${RegExp.$3}`.replace('+', '00')
+      }
+      sendVerificationCode({ acct, ...params })
     }
   }
 
@@ -125,7 +133,7 @@ export const getMemberSignUpFormProps: (
     config: getInputConfigHelper(
       mode, 
       'password', 
-      verify && { type: 'code', controlButtonFn }
+      verify && { type: 'code', controlButtonFn, sendCallback }
     ),
     onSubmit,
     buttonText: LANGUAGE_KEY.signUp,
