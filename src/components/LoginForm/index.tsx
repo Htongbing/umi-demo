@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import styles from './index.less';
-import { FormConfig, LoginFormProps, Obj } from '@/const';
+import { FormConfig, LoginFormProps, Obj, CODE_PHONE_PATTERN } from '@/const';
 import { FormInstance } from 'antd/es/form'
 
 import { Form, Button } from 'antd';
@@ -28,10 +28,16 @@ const LoginForm: React.FC<LoginFormProps> = ({
 
   const formRef = useRef<FormInstance>(null)
 
-  const onFinish: (data: object) => void = data => {
-    console.log(data)
+  const onFinish: (data: Obj) => void = data => {
+    const result = { ...data }
+    if (data.phone || CODE_PHONE_PATTERN.test(data.username)) {
+      const exec: null | string[] = CODE_PHONE_PATTERN.exec(data.phone)
+      if (exec) {
+        result[data.username ? 'username' : 'phone'] = `${exec[2]}${exec[3]}`.replace('+', '00')
+      }
+    }
     setLoading(true);
-    onSubmit(data).finally(() => setLoading(false));
+    onSubmit(result).then(console.log).finally(() => setLoading(false));
   };
 
   return (

@@ -1,4 +1,7 @@
-import { FormConfig, LoginFormProps, LANGUAGE_KEY, CODE_PHONE_PATTERN, INTERNATIONAL_PHONE_PATTERN, EMAIL_PATTERN, ExtraFormConfig, ControlButtonFn } from '@/const';
+import { FormConfig, LoginFormProps, LANGUAGE_KEY, CODE_PHONE_PATTERN, INTERNATIONAL_PHONE_PATTERN, EMAIL_PATTERN, ExtraFormConfig, ControlButtonFn, UDBParams, Obj } from '@/const';
+import { signUpMember, signUpAdmin } from '@/service/udb'
+
+declare const window: any
 
 export const phoneNumberValidator: (rule: any, value: string) => Promise<void> = (rule, value) => {
   return new Promise((resolve, reject) => {
@@ -100,7 +103,8 @@ export const getInputConfigHelper: (...args: any[]) => Array<FormConfig> = (
 export const getMemberSignUpFormProps: (
   mode: FormConfig['type'],
   verify: boolean,
-) => LoginFormProps = (mode, verify) => {
+  params: UDBParams
+) => LoginFormProps = (mode, verify, params) => {
   let controlButtonFn: ControlButtonFn | undefined
 
   if (mode && verify) {
@@ -109,22 +113,41 @@ export const getMemberSignUpFormProps: (
     }
   }
 
+  const onSubmit: (data: Obj) => Promise<any> = data => {
+    const payload: Obj = {
+      acct: data.email || data.phone || data.username,
+      passwd: window.UDB.SDK.rsa.RSAUtils.encryptedString(data.password)
+    }
+    return signUpMember({ ...payload, ...params })
+  }
+
   return {
     config: getInputConfigHelper(
       mode, 
       'password', 
       verify && { type: 'code', controlButtonFn }
     ),
-    onSubmit: () => new Promise(resolve => resolve()),
+    onSubmit,
     buttonText: LANGUAGE_KEY.signUp,
   }
 };
 
-export const getAdminSignUpFormProps: () => LoginFormProps = () => ({
-  config: getInputConfigHelper('email', 'password', 'phone'),
-  onSubmit: () => new Promise(resolve => resolve()),
-  buttonText: LANGUAGE_KEY.signUp,
-});
+export const getAdminSignUpFormProps: (params: UDBParams) => LoginFormProps = params => {
+  const onSubmit: (data: Obj) => Promise<any> = data => {
+    const payload: Obj = {
+      acct: data.email,
+      passwd: window.UDB.SDK.rsa.RSAUtils.encryptedString(data.password),
+      phone: data.phone
+    }
+    return signUpAdmin({ ...payload, ...params })
+  }
+
+  return {
+    config: getInputConfigHelper('email', 'password', 'phone'),
+    onSubmit,
+    buttonText: LANGUAGE_KEY.signUp,
+  }
+};
 
 export const getMemberSignInFormProps: (
   mode: FormConfig['type'],
@@ -148,7 +171,7 @@ export const getDashSignInFormProps: () => LoginFormProps = () => ({
 
 export const getMemberResetFormProps: (
   mode: FormConfig['type'],
-  onSubmit: () => Promise<void>,
+  onSubmit: () => Promise<any>,
 ) => LoginFormProps = (mode, onSubmit) => ({
   config: getInputConfigHelper(mode, 'code'),
   onSubmit,
@@ -156,7 +179,7 @@ export const getMemberResetFormProps: (
 });
 
 export const getAdminResetFormProps: (
-  onSubmit: () => Promise<void>,
+  onSubmit: () => Promise<any>,
 ) => LoginFormProps = onSubmit => ({
   config: getInputConfigHelper('email', 'code'),
   onSubmit,
@@ -164,7 +187,7 @@ export const getAdminResetFormProps: (
 });
 
 export const getDashResetFormProps: (
-  onSubmit: () => Promise<void>,
+  onSubmit: () => Promise<any>,
 ) => LoginFormProps = onSubmit => ({
   config: getInputConfigHelper('email', 'code'),
   onSubmit,
@@ -194,7 +217,7 @@ export const getResetFormConfig: () => Array<FormConfig> = () =>
   });
 
 export const getMemberChangeFormProps: (
-  onSubmit: () => Promise<void>,
+  onSubmit: () => Promise<any>,
 ) => LoginFormProps = onSubmit => ({
   config: getInputConfigHelper('code'),
   onSubmit,

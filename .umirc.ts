@@ -7,7 +7,10 @@ export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
   },
-  // proxy: {
-  //   '/udb': 'http://www.baidu.com'
-  // }
+  proxy: {
+    '/reg': {
+      'target': 'https://test-aurogon-login.yy.com/',
+      'changeOrigin': true
+    },
+  }
 });

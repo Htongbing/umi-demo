@@ -19,10 +19,10 @@ function OptionContent({
   return (
     <div className={styles['select-dial-code-option']}>
       <div className={`iti__flag iti__${iso2}`}></div>
-      {name && <span className={styles['name']}>{name}</span>}
-      <span
-        className={`${styles['value']}${name ? ` ${styles['normal']}` : ''}`}
-      >{`+${dialCode}`}</span>
+      {name && <>
+        <span className={styles['name']}>{name}</span>
+        <span className={classnames(styles['value'], styles['normal'])}>{`+${dialCode}`}</span>
+      </>}
     </div>
   );
 }
@@ -77,19 +77,6 @@ const SelectPhoneCountry: React.ForwardRefRenderFunction<
         className,
       )}
     >
-      <Select
-        className={classnames(
-          styles['select-phone-country'],
-          selectorContainerClassName,
-        )}
-        showSearch
-        optionLabelProp="label"
-        dropdownMatchSelectWidth={false}
-        value={selectCode}
-        onChange={(code: string): void => changeValue(code, inputValue)}
-      >
-        {genarateOptions}
-      </Select>
       <Input
         className={styles['select-phone-country-input']}
         ref={inputRef}
@@ -98,6 +85,18 @@ const SelectPhoneCountry: React.ForwardRefRenderFunction<
           changeValue(selectCode, ev.target.value)
         }
       ></Input>
+      <Select
+        className={classnames(
+          styles['select-phone-country'],
+          selectorContainerClassName,
+        )}
+        optionLabelProp="label"
+        dropdownMatchSelectWidth={false}
+        value={selectCode}
+        onChange={(code: string): void => changeValue(code, inputValue)}
+      >
+        {genarateOptions}
+      </Select>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { LANGUAGE_KEY } from '@/const';
-import { getInitConfig } from '@/service/udb'
+import { LANGUAGE_KEY, UDBParams, Obj } from '@/const';
+import { getMemberInitConfig, getAdminInitConfig } from '@/service/udb'
+import { history } from 'umi'
 
 export const useUpdate: (update: () => void, dependent?: Array<any>) => void = (
   update,
@@ -14,16 +15,30 @@ export const useUpdate: (update: () => void, dependent?: Array<any>) => void = (
   }, dependent);
 };
 
-export const useGetLanguage: () => boolean = () => {
+export const useGetLanguage: () => [boolean, Obj] = () => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [reqData, setReqData] = useState<Obj>({})
+  const { type, appid, subappid } = history.location.query
+
+  let getInitConfig: (params: UDBParams) => Promise<void>
+
+  if (type === 'member') {
+    getInitConfig = getMemberInitConfig
+  } else if (type === 'admin') {
+    getInitConfig = getAdminInitConfig
+  }
 
   useEffect(() => {
-    getInitConfig()
-      .then(data => {
-        Object.assign(LANGUAGE_KEY, data)
+    getInitConfig?.({
+      appid,
+      subappid,
+      callback: 'js'
+    })
+      .then((data: any): void => {
+        setReqData(data)
         setIsLoaded(true);
       })
   }, []);
 
-  return isLoaded;
+  return [isLoaded, reqData];
 };

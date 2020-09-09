@@ -2,6 +2,10 @@
   display: flex;
   align-items: center;
 
+  &.only-flag {
+    height: 16px;
+  }
+
   .name,
   .value {
     margin-left: 10px;
@@ -15,10 +19,6 @@
 .select-phone-country {
   &:global(.ant-select) {
     width: auto;
-
-    :global(.ant-select-selector) {
-      min-width: 90px;
-    }
   }
 
   &-input {

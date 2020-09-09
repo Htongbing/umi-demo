@@ -6,11 +6,13 @@ export const INTERNATIONAL_PHONE_PATTERN: RegExp = /^(?!\b(0)\1+\b)(\+?\d{1,3}[.
 
 export const EMAIL_PATTERN: RegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
 
-export const AXIOS_BASE_URL: string = '/udb'
+export const AXIOS_BASE_URL: string = '/'
 
 export const defaultPhoneCode: string = 'cn+86';
 
 export type ControlButtonFn = (form: FormInstance | null | undefined, setDisabled: React.Dispatch<React.SetStateAction<boolean>>) => void
+
+export type Obj = Record<string, string>
 
 export interface FormItemProps {
   value?: string;
@@ -36,7 +38,7 @@ export type ExtraFormConfig = Record<keyof FormConfig, any>
 export interface LoginFormProps {
   buttonText: string;
   config: Array<FormConfig>;
-  onSubmit: (data: object) => Promise<void>;
+  onSubmit: (data: Obj) => Promise<any>;
 }
 
 export interface GetDataComponentProps extends Record<string, any> {
@@ -44,7 +46,12 @@ export interface GetDataComponentProps extends Record<string, any> {
   changeVerify: () => void
 }
 
-export type Obj = Record<string, string>
+export interface UDBParams {
+  appid: string,
+  subappid?: string,
+  callback?: string,
+  stoken?: string
+}
 
 export const LANGUAGE_KEY: Obj = {
   email: 'Email',
