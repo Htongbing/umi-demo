@@ -16,7 +16,7 @@ function SignIn({ data }: Record<string, any>): React.ReactNode {
   let props: LoginFormProps | null = null;
 
   if (type === 'member') {
-    props = getMemberSignInFormProps(mode);
+    props = getMemberSignInFormProps(mode, data);
   } else if (type === 'admin') {
     props = getAdminSignInFormProps(data);
   } else if (type === 'dash') {

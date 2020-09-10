@@ -48,7 +48,9 @@ const LoginForm: React.FC<LoginFormProps> = ({
   const onFinish: (data: Obj) => void = data => {
     const result = { ...data };
     if (data.phone || CODE_PHONE_PATTERN.test(data.username)) {
-      const exec: null | string[] = CODE_PHONE_PATTERN.exec(data.phone);
+      const exec: null | string[] = CODE_PHONE_PATTERN.exec(
+        data.phone || data.username,
+      );
       if (exec) {
         result[
           data.username ? 'username' : 'phone'

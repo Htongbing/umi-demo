@@ -171,7 +171,12 @@ export const getMemberSignUpFormProps: (
       if (CODE_PHONE_PATTERN.test(acct)) {
         acct = `${RegExp.$2}${RegExp.$3}`.replace('+', '00');
       }
-      sendVerificationCode({ acct, ...params });
+      checkAccount({ ...params, acct }).then(({ stoken }) => {
+        Object.assign(params, { stoken });
+        sendVerificationCode({ acct, ...params }).then(({ stoken }) =>
+          Object.assign(params, { stoken }),
+        );
+      });
     };
   }
 
@@ -179,8 +184,12 @@ export const getMemberSignUpFormProps: (
     const payload: Obj = {
       acct: data.email || data.phone || data.username,
       passwd: UDB.SDK.rsa.RSAUtils.encryptedString(data.password),
+      verifycode: data.code,
       isverify: verify ? '1' : '0',
     };
+    if (verify) {
+      return signUpMember({ ...payload, ...params });
+    }
     return checkAccount({ ...params, acct: payload.acct }).then(
       ({ stoken }) => {
         Object.assign(params, { stoken });
@@ -225,11 +234,21 @@ export const getAdminSignUpFormProps: (
 
 export const getMemberSignInFormProps: (
   mode: FormConfig['type'],
-) => LoginFormProps = mode => ({
-  config: getInputConfigHelper(mode, 'password'),
-  onSubmit: () => new Promise(resolve => resolve()),
-  buttonText: LANGUAGE_KEY.signIn,
-});
+  params: UDBParams,
+) => LoginFormProps = (mode, params) => {
+  const onSubmit: (data: Obj) => Promise<any> = data => {
+    const payload: Obj = {
+      acct: data[mode as string],
+      pwd: UDB.SDK.rsa.RSAUtils.encryptedString(data.password),
+    };
+    return loginAccount({ ...payload, ...params });
+  };
+  return {
+    config: getInputConfigHelper(mode, 'password'),
+    onSubmit,
+    buttonText: LANGUAGE_KEY.signIn,
+  };
+};
 
 export const getAdminSignInFormProps: (
   params: UDBParams,
@@ -239,6 +258,7 @@ export const getAdminSignInFormProps: (
       acct: data.email,
       pwd: UDB.SDK.rsa.RSAUtils.encryptedString(data.password),
     };
+    console.log(payload);
     return loginAccount({ ...payload, ...params });
   };
   return {
