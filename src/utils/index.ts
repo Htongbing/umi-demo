@@ -149,7 +149,22 @@ export const getMemberSignUpFormProps: (
 
   if (mode && verify) {
     controlButtonFn = (form, setDisabled) => {
-      form && setDisabled(!!form.getFieldError(mode).length);
+      if (form) {
+        let disabled: boolean = false;
+        let validator: (rule: any, value: string) => Promise<void>;
+
+        if (mode === 'username') {
+          validator = usernameValidator;
+        } else if (mode === 'phone') {
+          validator = phoneNumberValidator;
+        } else {
+          validator = emailValidator;
+        }
+
+        validator(null, form.getFieldValue(mode))
+          .catch(() => (disabled = true))
+          .finally(() => setDisabled(disabled));
+      }
     };
     sendCallback = formData => {
       let acct = formData[mode];

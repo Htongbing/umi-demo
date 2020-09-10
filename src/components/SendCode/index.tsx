@@ -11,9 +11,11 @@ const SendCode: React.ForwardRefRenderFunction<Input, SendCodeProps> = (
   inputRef: React.Ref<Input>,
 ) => {
   const [timing, setTiming] = useState<number>(0);
-  const [disabled, setDisabled] = useState<boolean>(!!props.controlButtonFn)
+  const [disabled, setDisabled] = useState<boolean>(!!props.controlButtonFn);
 
-  const text: string = timing ? `${LANGUAGE_KEY.resend} (${timing})` : LANGUAGE_KEY.send;
+  const text: string = timing
+    ? `${LANGUAGE_KEY.resend} (${timing})`
+    : LANGUAGE_KEY.send;
 
   let timer: number;
 
@@ -24,22 +26,28 @@ const SendCode: React.ForwardRefRenderFunction<Input, SendCodeProps> = (
     return () => clearTimeout(timer);
   });
 
-  const { formInstance, formData, controlButtonFn, sendCallback, ...rest } = props
+  const {
+    formInstance,
+    formData,
+    controlButtonFn,
+    sendCallback,
+    ...rest
+  } = props;
 
   const send: () => void = () => {
-    formData && sendCallback?.(formData)
+    formData && sendCallback?.(formData);
     setTiming(60);
   };
-  
+
   if (controlButtonFn) {
-    let controlTimer: number
+    let controlTimer: number;
 
     useEffect(() => {
-      controlTimer = setTimeout(() => {
-        controlButtonFn(formInstance, setDisabled)
-      })
-      return () => clearTimeout(controlTimer)
-    }, [formData])
+      controlTimer = window.setTimeout(() => {
+        controlButtonFn(formInstance, setDisabled);
+      });
+      return () => clearTimeout(controlTimer);
+    }, [formData]);
   }
 
   return (
