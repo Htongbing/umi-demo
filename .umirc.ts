@@ -9,8 +9,12 @@ export default defineConfig({
   },
   proxy: {
     '/reg': {
-      'target': 'https://test-aurogon-login.yy.com/',
-      'changeOrigin': true
+      target: 'https://test-aurogon-login.yy.com/',
+      changeOrigin: true,
     },
-  }
+    '/lgn': {
+      target: 'https://test-aurogon-login.yy.com/',
+      changeOrigin: true,
+    },
+  },
 });

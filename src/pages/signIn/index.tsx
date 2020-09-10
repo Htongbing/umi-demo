@@ -10,7 +10,7 @@ import {
 import LoginForm from '@/components/LoginForm';
 import GetData from '@/components/GetData';
 
-function SignIn(): React.ReactNode {
+function SignIn({ data }: Record<string, any>): React.ReactNode {
   const { type, mode } = history.location.query;
 
   let props: LoginFormProps | null = null;
@@ -18,7 +18,7 @@ function SignIn(): React.ReactNode {
   if (type === 'member') {
     props = getMemberSignInFormProps(mode);
   } else if (type === 'admin') {
-    props = getAdminSignInFormProps();
+    props = getAdminSignInFormProps(data);
   } else if (type === 'dash') {
     props = getDashSignInFormProps();
   }
@@ -26,4 +26,4 @@ function SignIn(): React.ReactNode {
   return props && <LoginForm {...props} />;
 }
 
-export default GetData(SignIn)
+export default GetData(SignIn);

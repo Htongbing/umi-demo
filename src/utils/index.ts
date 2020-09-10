@@ -1,27 +1,63 @@
-import { FormConfig, LoginFormProps, LANGUAGE_KEY, CODE_PHONE_PATTERN, INTERNATIONAL_PHONE_PATTERN, EMAIL_PATTERN, ExtraFormConfig, ControlButtonFn, UDBParams, Obj, SendCallback } from '@/const';
-import { signUpMember, signUpAdmin, sendVerificationCode } from '@/service/udb'
+import {
+  FormConfig,
+  LoginFormProps,
+  LANGUAGE_KEY,
+  CODE_PHONE_PATTERN,
+  INTERNATIONAL_PHONE_PATTERN,
+  EMAIL_PATTERN,
+  ExtraFormConfig,
+  ControlButtonFn,
+  UDBParams,
+  Obj,
+  SendCallback,
+} from '@/const';
+import {
+  signUpMember,
+  signUpAdmin,
+  sendVerificationCode,
+  checkAccount,
+  loginAccount,
+} from '@/service/udb';
 
-declare const window: any
+declare const UDB: any;
 
-export const phoneNumberValidator: (rule: any, value: string) => Promise<void> = (rule, value) => {
+export const phoneNumberValidator: (
+  rule: any,
+  value: string,
+) => Promise<void> = (rule, value) => {
   return new Promise((resolve, reject) => {
-    if (CODE_PHONE_PATTERN.test(value) && INTERNATIONAL_PHONE_PATTERN.test(`${RegExp.$2}${RegExp.$3}`)) {
-      return resolve()
+    if (
+      CODE_PHONE_PATTERN.test(value) &&
+      INTERNATIONAL_PHONE_PATTERN.test(`${RegExp.$2}${RegExp.$3}`)
+    ) {
+      return resolve();
     }
-    return reject(LANGUAGE_KEY.phoneError)
-  })
-}
+    return reject(LANGUAGE_KEY.phoneError);
+  });
+};
 
-export const emailValidator: (rule: any, value: string) => Promise<void> = (rule, value) => new Promise((resolve, reject) => EMAIL_PATTERN.test(value) ? resolve() : reject(LANGUAGE_KEY.emailError))
+export const emailValidator: (rule: any, value: string) => Promise<void> = (
+  rule,
+  value,
+) =>
+  new Promise((resolve, reject) =>
+    EMAIL_PATTERN.test(value) ? resolve() : reject(LANGUAGE_KEY.emailError),
+  );
 
-export const usernameValidator: (rule: any, value: string) => Promise<void> = (rule, value) => {
+export const usernameValidator: (rule: any, value: string) => Promise<void> = (
+  rule,
+  value,
+) => {
   if (CODE_PHONE_PATTERN.test(value) && RegExp.$3) {
-    return phoneNumberValidator(rule, value)
+    return phoneNumberValidator(rule, value);
   }
-  return emailValidator(rule, value)
-}
+  return emailValidator(rule, value);
+};
 
-export const getInputConfig: Record<string, (config?: ExtraFormConfig) => FormConfig> = {
+export const getInputConfig: Record<
+  string,
+  (config?: ExtraFormConfig) => FormConfig
+> = {
   email(): FormConfig {
     return {
       label: LANGUAGE_KEY.email,
@@ -30,9 +66,9 @@ export const getInputConfig: Record<string, (config?: ExtraFormConfig) => FormCo
         {
           type: 'email',
           required: true,
-          message: LANGUAGE_KEY.emailError
-        }
-      ]
+          message: LANGUAGE_KEY.emailError,
+        },
+      ],
     };
   },
   phone(): FormConfig {
@@ -43,9 +79,9 @@ export const getInputConfig: Record<string, (config?: ExtraFormConfig) => FormCo
       rules: [
         {
           required: true,
-          validator: phoneNumberValidator
-        }
-      ]
+          validator: phoneNumberValidator,
+        },
+      ],
     };
   },
   username(): FormConfig {
@@ -56,9 +92,9 @@ export const getInputConfig: Record<string, (config?: ExtraFormConfig) => FormCo
       rules: [
         {
           required: true,
-          validator: usernameValidator
-        }
-      ]
+          validator: usernameValidator,
+        },
+      ],
     };
   },
   password(config): FormConfig {
@@ -70,10 +106,10 @@ export const getInputConfig: Record<string, (config?: ExtraFormConfig) => FormCo
         {
           required: true,
           pattern: /\w{8,}/i,
-          message: LANGUAGE_KEY.passwordError
-        }
+          message: LANGUAGE_KEY.passwordError,
+        },
       ],
-      ...config
+      ...config,
     };
   },
   code(config): FormConfig {
@@ -84,77 +120,86 @@ export const getInputConfig: Record<string, (config?: ExtraFormConfig) => FormCo
       rules: [
         {
           required: true,
-          message: LANGUAGE_KEY.codeError
-        }
+          message: LANGUAGE_KEY.codeError,
+        },
       ],
-      ...config
+      ...config,
     };
   },
 };
 
 export const getInputConfigHelper: (...args: any[]) => Array<FormConfig> = (
   ...args
-) => args.filter(type => !!type).map(typeObj => {
-  if (typeof typeObj === 'string') return getInputConfig[typeObj]()
-  const { type, ...args } = typeObj
-  return getInputConfig[type](args)
-});
+) =>
+  args
+    .filter(type => !!type)
+    .map(typeObj => {
+      if (typeof typeObj === 'string') return getInputConfig[typeObj]();
+      const { type, ...args } = typeObj;
+      return getInputConfig[type](args);
+    });
 
 export const getMemberSignUpFormProps: (
   mode: FormConfig['type'],
   verify: boolean,
-  params: UDBParams
+  params: UDBParams,
 ) => LoginFormProps = (mode, verify, params) => {
-  let controlButtonFn: ControlButtonFn | undefined
-  let sendCallback: SendCallback | undefined
+  let controlButtonFn: ControlButtonFn | undefined;
+  let sendCallback: SendCallback | undefined;
 
   if (mode && verify) {
     controlButtonFn = (form, setDisabled) => {
-      form && setDisabled(!!form.getFieldError(mode).length)
-    }
+      form && setDisabled(!!form.getFieldError(mode).length);
+    };
     sendCallback = formData => {
-      let acct = formData[mode]
+      let acct = formData[mode];
       if (CODE_PHONE_PATTERN.test(acct)) {
-        acct = `${RegExp.$2}${RegExp.$3}`.replace('+', '00')
+        acct = `${RegExp.$2}${RegExp.$3}`.replace('+', '00');
       }
-      sendVerificationCode({ acct, ...params })
-    }
+      sendVerificationCode({ acct, ...params });
+    };
   }
 
   const onSubmit: (data: Obj) => Promise<any> = data => {
     const payload: Obj = {
       acct: data.email || data.phone || data.username,
-      passwd: window.UDB.SDK.rsa.RSAUtils.encryptedString(data.password)
-    }
-    return signUpMember({ ...payload, ...params })
-  }
+      passwd: UDB.SDK.rsa.RSAUtils.encryptedString(data.password),
+    };
+    return signUpMember({ ...payload, ...params });
+  };
 
   return {
     config: getInputConfigHelper(
-      mode, 
-      'password', 
-      verify && { type: 'code', controlButtonFn, sendCallback }
+      mode,
+      'password',
+      verify && { type: 'code', controlButtonFn, sendCallback },
     ),
     onSubmit,
     buttonText: LANGUAGE_KEY.signUp,
-  }
+  };
 };
 
-export const getAdminSignUpFormProps: (params: UDBParams) => LoginFormProps = params => {
+export const getAdminSignUpFormProps: (
+  params: UDBParams,
+) => LoginFormProps = params => {
   const onSubmit: (data: Obj) => Promise<any> = data => {
     const payload: Obj = {
       acct: data.email,
-      passwd: window.UDB.SDK.rsa.RSAUtils.encryptedString(data.password),
-      phone: data.phone
-    }
-    return signUpAdmin({ ...payload, ...params })
-  }
+      passwd: UDB.SDK.rsa.RSAUtils.encryptedString(data.password),
+    };
+    return checkAccount({ ...params, acct: payload.acct }).then(
+      ({ stoken }) => {
+        Object.assign(params, { stoken });
+        signUpAdmin({ ...payload, ...params });
+      },
+    );
+  };
 
   return {
     config: getInputConfigHelper('email', 'password', 'phone'),
     onSubmit,
     buttonText: LANGUAGE_KEY.signUp,
-  }
+  };
 };
 
 export const getMemberSignInFormProps: (
@@ -165,11 +210,22 @@ export const getMemberSignInFormProps: (
   buttonText: LANGUAGE_KEY.signIn,
 });
 
-export const getAdminSignInFormProps: () => LoginFormProps = () => ({
-  config: getInputConfigHelper('email', 'password'),
-  onSubmit: () => new Promise(resolve => resolve()),
-  buttonText: LANGUAGE_KEY.signIn,
-});
+export const getAdminSignInFormProps: (
+  params: UDBParams,
+) => LoginFormProps = params => {
+  const onSubmit: (data: Obj) => Promise<any> = data => {
+    const payload: Obj = {
+      acct: data.email,
+      pwd: UDB.SDK.rsa.RSAUtils.encryptedString(data.password),
+    };
+    return loginAccount({ ...payload, ...params });
+  };
+  return {
+    config: getInputConfigHelper('email', 'password'),
+    onSubmit,
+    buttonText: LANGUAGE_KEY.signIn,
+  };
+};
 
 export const getDashSignInFormProps: () => LoginFormProps = () => ({
   config: getInputConfigHelper('email', 'password'),
@@ -211,17 +267,17 @@ export const getResetFormConfig: () => Array<FormConfig> = () =>
     rules: [
       {
         required: true,
-        message: LANGUAGE_KEY.repeatPasswordEmptyError
+        message: LANGUAGE_KEY.repeatPasswordEmptyError,
       },
       ({ getFieldValue }: { getFieldValue: any }) => ({
         validator(rule: any, value: string | undefined): Promise<void> {
           if (!value || getFieldValue('password') === value) {
-            return Promise.resolve()
+            return Promise.resolve();
           }
-          return Promise.reject(LANGUAGE_KEY.repeatPasswordError)
-        }
-      })
-    ]
+          return Promise.reject(LANGUAGE_KEY.repeatPasswordError);
+        },
+      }),
+    ],
   });
 
 export const getMemberChangeFormProps: (

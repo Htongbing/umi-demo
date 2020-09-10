@@ -1,28 +1,31 @@
-import { FormInstance } from 'antd/es/form'
+import { FormInstance } from 'antd/es/form';
 
 export const CODE_PHONE_PATTERN: RegExp = /^(\w+(\+\d+))-(.*)$/;
 
-export const INTERNATIONAL_PHONE_PATTERN: RegExp = /^(?!\b(0)\1+\b)(\+?\d{1,3}[. -]?)?\(?\d{3}\)?([. -]?)\d{3}\3\d{4}$/
+export const INTERNATIONAL_PHONE_PATTERN: RegExp = /^(?!\b(0)\1+\b)(\+?\d{1,3}[. -]?)?\(?\d{3}\)?([. -]?)\d{3}\3\d{4}$/;
 
-export const EMAIL_PATTERN: RegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+export const EMAIL_PATTERN: RegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
 
-export const AXIOS_BASE_URL: string = '/'
+export const AXIOS_BASE_URL: string = '/';
 
 export const defaultPhoneCode: string = 'cn+86';
 
-export type ControlButtonFn = (form: FormInstance | null | undefined, setDisabled: React.Dispatch<React.SetStateAction<boolean>>) => void
+export type ControlButtonFn = (
+  form: FormInstance | null | undefined,
+  setDisabled: React.Dispatch<React.SetStateAction<boolean>>,
+) => void;
 
-export type SendCallback = (formData: Obj) => void
+export type SendCallback = (formData: Obj) => void;
 
-export type Obj = Record<string, string>
+export type Obj = Record<string, string>;
 
 export interface FormItemProps {
   value?: string;
   onChange?: (value: React.ChangeEvent | string) => void;
-  formInstance?: FormInstance | null,
-  formData?: Obj,
-  controlButtonFn?: ControlButtonFn,
-  sendCallback?: SendCallback
+  formInstance?: FormInstance | null;
+  formData?: Obj;
+  controlButtonFn?: ControlButtonFn;
+  sendCallback?: SendCallback;
 }
 
 export type LabelInputType = 'password' | 'phone' | 'code';
@@ -31,13 +34,13 @@ export interface FormConfig {
   label: string;
   name: string;
   type?: LabelInputType | 'username';
-  rules?: any[],
-  controlButtonFn?: ControlButtonFn,
-  dependencies?: string[],
-  sendCallback?: SendCallback
+  rules?: any[];
+  controlButtonFn?: ControlButtonFn;
+  dependencies?: string[];
+  sendCallback?: SendCallback;
 }
 
-export type ExtraFormConfig = Record<keyof FormConfig, any>
+export type ExtraFormConfig = Record<keyof FormConfig, any>;
 
 export interface LoginFormProps {
   buttonText: string;
@@ -46,16 +49,17 @@ export interface LoginFormProps {
 }
 
 export interface GetDataComponentProps extends Record<string, any> {
-  isVerify: boolean,
-  changeVerify: () => void
+  isVerify: boolean;
+  changeVerify: () => void;
 }
 
 export interface UDBParams {
-  appid: string,
-  subappid?: string,
-  callback?: string,
-  stoken?: string,
-  acct?: string
+  appid: string;
+  subappid?: string;
+  callback?: string;
+  stoken?: string;
+  acct?: string;
+  type?: string;
 }
 
 export const LANGUAGE_KEY: Obj = {
@@ -75,5 +79,5 @@ export const LANGUAGE_KEY: Obj = {
   repeatPasswordError: 'The two passwords that you entered do not match',
   repeatPasswordEmptyError: 'Please confirm your password',
   send: 'Send Code',
-  resend: 'Resend'
+  resend: 'Resend',
 };
