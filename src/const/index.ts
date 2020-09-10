@@ -23,6 +23,7 @@ export interface FormItemProps {
   value?: string;
   onChange?: (value: React.ChangeEvent | string) => void;
   onBlur?: () => void;
+  onFocus?: () => void;
   formInstance?: FormInstance | null;
   formData?: Obj;
   controlButtonFn?: ControlButtonFn;

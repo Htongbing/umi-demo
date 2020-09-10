@@ -19,10 +19,14 @@ function OptionContent({
   return (
     <div className={styles['select-dial-code-option']}>
       <div className={`iti__flag iti__${iso2}`}></div>
-      {name && <>
-        <span className={styles['name']}>{name}</span>
-        <span className={classnames(styles['value'], styles['normal'])}>{`+${dialCode}`}</span>
-      </>}
+      {name && (
+        <>
+          <span className={styles['name']}>{name}</span>
+          <span
+            className={classnames(styles['value'], styles['normal'])}
+          >{`+${dialCode}`}</span>
+        </>
+      )}
     </div>
   );
 }
@@ -56,7 +60,7 @@ const SelectPhoneCountry: React.ForwardRefRenderFunction<
   Input,
   SelectPhoneCountryProps
 > = (
-  { value, onChange, className, selectorContainerClassName },
+  { value, onChange, className, selectorContainerClassName, onBlur, onFocus },
   inputRef: React.Ref<Input>,
 ) => {
   let inputValue: string = '';
@@ -76,6 +80,8 @@ const SelectPhoneCountry: React.ForwardRefRenderFunction<
         styles['select-phone-country-container'],
         className,
       )}
+      onFocus={onFocus}
+      onBlur={onBlur}
     >
       <Input
         className={styles['select-phone-country-input']}

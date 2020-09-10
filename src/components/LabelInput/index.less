@@ -3,12 +3,12 @@
   align-items: center;
   height: 48px;
   padding: 0 16px;
-  border: 1px solid #EFEFEF;
+  border: 1px solid #efefef;
   position: relative;
   transition: border-color 0.5s;
 
   &.is-focus {
-    border-color: #2C2C2C;
+    border-color: #2c2c2c;
   }
 }
 
@@ -34,7 +34,7 @@
   border: 0;
   border-radius: 0;
   line-height: 16px;
-  color: #2C2C2C;
+  color: #2c2c2c;
 
   &:focus,
   &:global(.ant-input-affix-wrapper-focused) {
@@ -43,18 +43,32 @@
 }
 
 .label-input {
+  transition: transform 0.3s linear;
+
   &.input-ing {
     transform: translateY(8px);
   }
 
   :global(.ant-select) {
     height: 16px;
-    padding-right: 0;
+    padding: 0 23px 0 32px;
+    position: relative;
+
+    &::before {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 28px;
+      position: absolute;
+      left: 16px;
+      top: -6px;
+      background-color: #efefef;
+    }
 
     &:global(.ant-select-single:not(.ant-select-customize-input)
         .ant-select-selector) {
       height: 16px;
-      padding-left: 0;
+      padding: 0;
       border: 0;
 
       :global(.ant-select-selection-search-input) {
@@ -70,7 +84,17 @@
 
     &:global(.ant-select-single.ant-select-show-arrow
         .ant-select-selection-item) {
+      padding: 0;
       line-height: 16px;
+    }
+
+    :global(.ant-select-arrow) {
+      right: 0;
+    }
+
+    &:global(.ant-select-focused:not(.ant-select-disabled).ant-select-single:not(.ant-select-customize-input)
+        .ant-select-selector) {
+      box-shadow: none;
     }
   }
 }

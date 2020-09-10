@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import styles from './index.less';
 import classnames from 'classnames';
-import { LabelInputType, FormItemProps } from '@/const';
+import { LabelInputType, FormItemProps, CODE_PHONE_PATTERN } from '@/const';
 import { useUpdate } from '@/utils/hooks';
 
 import { Input } from 'antd';
@@ -47,7 +47,13 @@ const LabelInput: React.FC<LabelInputProps> = ({
   };
 
   let inputComponent: React.ReactNode;
-  let inputing: boolean = type === 'phone' || !!value;
+  let inputing: boolean = !!value;
+
+  if (type === 'phone' && inputing) {
+    if (CODE_PHONE_PATTERN.test(value || '') && !RegExp.$3) {
+      inputing = false;
+    }
+  }
 
   props.className = classnames(props.className, {
     [styles['input-ing']]: inputing,
