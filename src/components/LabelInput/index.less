@@ -6,6 +6,7 @@
   border: 1px solid #efefef;
   position: relative;
   transition: border-color 0.5s;
+  cursor: text;
 
   &.is-focus {
     border-color: #2c2c2c;
@@ -108,6 +109,10 @@
     &:global(.ant-select-focused:not(.ant-select-disabled).ant-select-single:not(.ant-select-customize-input)
         .ant-select-selector) {
       box-shadow: none;
+    }
+
+    :global(.ant-select-selection-search) {
+      display: none;
     }
   }
 }

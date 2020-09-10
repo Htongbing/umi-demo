@@ -95,14 +95,14 @@ const LabelInput: React.FC<LabelInputProps> = ({
         'label-input-container',
         { [styles['is-focus']]: isFocus },
       )}
+      tabIndex={1}
+      onFocus={(): void => inputRef.current?.focus()}
     >
       {!!label && (
         <div
           className={classnames(styles['label-input-placeholder'], {
             [styles['top-placeholder']]: inputing,
           })}
-          tabIndex={1}
-          onFocus={(): void => inputRef.current?.focus()}
         >
           {label}
         </div>
