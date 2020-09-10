@@ -1,6 +1,7 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import styles from './index.less';
 import { FormItemProps, LANGUAGE_KEY } from '@/const';
+import classnames from 'classnames';
 
 import { Input, Button } from 'antd';
 
@@ -55,7 +56,9 @@ const SendCode: React.ForwardRefRenderFunction<Input, SendCodeProps> = (
       ref={inputRef}
       suffix={
         <Button
-          className={styles['send-code-btn']}
+          className={classnames(styles['send-code-btn'], {
+            [styles['timing']]: !!timing,
+          })}
           type="link"
           disabled={disabled || !!timing}
           onClick={send}

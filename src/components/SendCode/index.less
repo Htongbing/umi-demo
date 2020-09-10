@@ -1,5 +1,16 @@
+@btn-color: #466c63;
 .send-code-btn:global(.ant-btn) {
   height: auto;
   line-height: 1;
   padding: 0;
+  color: @btn-color;
+
+  &:global(.ant-btn-link[disabled]) {
+    color: @btn-color;
+    opacity: 0.4;
+
+    &.timing {
+      opacity: 0.6;
+    }
+  }
 }
