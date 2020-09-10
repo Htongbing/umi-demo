@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import styles from './index.less';
 import classnames from 'classnames';
-import { LabelInputType, FormItemProps, Obj } from '@/const';
+import { LabelInputType, FormItemProps } from '@/const';
 import { useUpdate } from '@/utils/hooks';
 
 import { Input } from 'antd';
@@ -21,19 +21,30 @@ const LabelInput: React.FC<LabelInputProps> = ({
   formData,
   formInstance,
   controlButtonFn,
-  sendCallback
+  sendCallback,
+  onBlur,
 }) => {
   const inputRef = useRef<Input | null>(null);
-  const [isFocus, setIsFocus] = useState<boolean>(false)
+  const [isFocus, setIsFocus] = useState<boolean>(false);
 
   const props: {
     value?: string;
     onChange?: (value: React.ChangeEvent | string) => void;
     ref: React.Ref<Input>;
     className: string;
-    onFocus: () => void,
-    onBlur: () => void
-  } = { value, onChange, ref: inputRef, className: styles['label-input'], onFocus: () => setIsFocus(true), onBlur: () => setIsFocus(false) };
+    onFocus: () => void;
+    onBlur: () => void;
+  } = {
+    value,
+    onChange,
+    ref: inputRef,
+    className: styles['label-input'],
+    onFocus: () => setIsFocus(true),
+    onBlur: () => {
+      onBlur?.();
+      setIsFocus(false);
+    },
+  };
 
   let inputComponent: React.ReactNode;
   let inputing: boolean = type === 'phone' || !!value;
@@ -55,7 +66,15 @@ const LabelInput: React.FC<LabelInputProps> = ({
       );
       break;
     case 'code':
-      inputComponent = <SendCode {...props} formData={formData} formInstance={formInstance} controlButtonFn={controlButtonFn} sendCallback={sendCallback} />;
+      inputComponent = (
+        <SendCode
+          {...props}
+          formData={formData}
+          formInstance={formInstance}
+          controlButtonFn={controlButtonFn}
+          sendCallback={sendCallback}
+        />
+      );
       break;
     default:
       inputComponent = <Input {...props} />;
@@ -64,7 +83,13 @@ const LabelInput: React.FC<LabelInputProps> = ({
   useUpdate((): void => inputRef.current?.focus(), [type]);
 
   return (
-    <div className={classnames(styles['label-input-container'], 'label-input-container', { [styles['is-focus']]: isFocus })}>
+    <div
+      className={classnames(
+        styles['label-input-container'],
+        'label-input-container',
+        { [styles['is-focus']]: isFocus },
+      )}
+    >
       {!!label && (
         <div
           className={classnames(styles['label-input-placeholder'], {

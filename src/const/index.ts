@@ -22,6 +22,7 @@ export type Obj = Record<string, string>;
 export interface FormItemProps {
   value?: string;
   onChange?: (value: React.ChangeEvent | string) => void;
+  onBlur?: () => void;
   formInstance?: FormInstance | null;
   formData?: Obj;
   controlButtonFn?: ControlButtonFn;
