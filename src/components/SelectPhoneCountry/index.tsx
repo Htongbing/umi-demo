@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import styles from './index.less';
 import classnames from 'classnames';
 import countries from '@/const/countries.ts';
@@ -63,6 +63,8 @@ const SelectPhoneCountry: React.ForwardRefRenderFunction<
   { value, onChange, className, selectorContainerClassName, onBlur, onFocus },
   inputRef: React.Ref<Input>,
 ) => {
+  const [prefix, setPerfix] = useState<string>('');
+
   let inputValue: string = '';
   let selectCode: string = defaultPhoneCode;
 
@@ -83,6 +85,7 @@ const SelectPhoneCountry: React.ForwardRefRenderFunction<
       onFocus={onFocus}
       onBlur={onBlur}
     >
+      {prefix && <div className={styles['code-prefix']}>{prefix}</div>}
       <Input
         className={styles['select-phone-country-input']}
         ref={inputRef}
@@ -99,7 +102,10 @@ const SelectPhoneCountry: React.ForwardRefRenderFunction<
         optionLabelProp="label"
         dropdownMatchSelectWidth={false}
         value={selectCode}
-        onChange={(code: string): void => changeValue(code, inputValue)}
+        onChange={(code: string): void => {
+          setPerfix(CODE_PHONE_PATTERN.exec(`${code}-`)?.[2] || '');
+          changeValue(code, inputValue);
+        }}
       >
         {genarateOptions}
       </Select>

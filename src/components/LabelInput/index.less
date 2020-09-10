@@ -47,11 +47,21 @@
 
   &.input-ing {
     transform: translateY(8px);
+
+    .selector-container,
+    :global(.ant-input-suffix) {
+      transform: translateY(-8px);
+    }
+  }
+
+  .selector-container,
+  :global(.ant-input-suffix) {
+    transition: inherit;
   }
 
   :global(.ant-select) {
     height: 16px;
-    padding: 0 23px 0 32px;
+    padding: 0 0 0 17px;
     position: relative;
 
     &::before {
@@ -67,6 +77,7 @@
 
     &:global(.ant-select-single:not(.ant-select-customize-input)
         .ant-select-selector) {
+      width: 59px;
       height: 16px;
       padding: 0;
       border: 0;
@@ -84,7 +95,9 @@
 
     &:global(.ant-select-single.ant-select-show-arrow
         .ant-select-selection-item) {
-      padding: 0;
+      display: flex;
+      justify-content: center;
+      padding-right: 8px;
       line-height: 16px;
     }
 

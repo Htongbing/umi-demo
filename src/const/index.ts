@@ -62,6 +62,7 @@ export interface UDBParams {
   stoken?: string;
   acct?: string;
   type?: string;
+  isverify?: '0' | '1';
 }
 
 export const LANGUAGE_KEY: Obj = {

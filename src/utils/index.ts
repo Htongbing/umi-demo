@@ -164,8 +164,14 @@ export const getMemberSignUpFormProps: (
     const payload: Obj = {
       acct: data.email || data.phone || data.username,
       passwd: UDB.SDK.rsa.RSAUtils.encryptedString(data.password),
+      isverify: verify ? '1' : '0',
     };
-    return signUpMember({ ...payload, ...params });
+    return checkAccount({ ...params, acct: payload.acct }).then(
+      ({ stoken }) => {
+        Object.assign(params, { stoken });
+        signUpMember({ ...payload, ...params });
+      },
+    );
   };
 
   return {

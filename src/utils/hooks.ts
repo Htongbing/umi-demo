@@ -22,12 +22,14 @@ export const useUpdate: (update: () => void, dependent?: Array<any>) => void = (
 export const useGetLanguage: () => [boolean, Obj] = () => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [reqData, setReqData] = useState<Obj>({});
-  const { type, appid, subappid, mode } = history.location.query;
+  const { type, appid, subappid, mode, verify } = history.location.query;
   const { pathname } = history.location;
 
   let getInitConfig: (params: UDBParams) => Promise<void>;
 
   let loginType: string;
+
+  let isverify: '0' | '1';
 
   if (pathname === '/signIn') {
     getInitConfig = getLoginInitConfig;
@@ -37,6 +39,7 @@ export const useGetLanguage: () => [boolean, Obj] = () => {
     }
   } else if (type === 'member') {
     getInitConfig = getMemberInitConfig;
+    isverify = verify ? '1' : '0';
   } else if (type === 'admin') {
     getInitConfig = getAdminInitConfig;
   }
@@ -47,6 +50,7 @@ export const useGetLanguage: () => [boolean, Obj] = () => {
       subappid,
       callback: 'js',
       type: loginType,
+      isverify,
     }).then((data: any): void => {
       setReqData({
         appid,
