@@ -8,7 +8,7 @@ export const EMAIL_PATTERN: RegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-
 
 export const AXIOS_BASE_URL: string = '/';
 
-export const defaultPhoneCode: string = 'cn+86';
+export const defaultPhoneCode: string = 'us+1';
 
 export type ControlButtonFn = (
   form: FormInstance | null | undefined,
@@ -30,7 +30,7 @@ export interface FormItemProps {
   sendCallback?: SendCallback;
 }
 
-export type LabelInputType = 'password' | 'phone' | 'code';
+export type LabelInputType = 'password' | 'phone' | 'code' | 'email';
 
 export interface FormConfig {
   label: string;
@@ -63,6 +63,8 @@ export interface UDBParams {
   acct?: string;
   type?: string;
   isverify?: '0' | '1';
+  account?: string;
+  code?: string;
 }
 
 export const LANGUAGE_KEY: Obj = {

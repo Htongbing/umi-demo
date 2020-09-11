@@ -19,7 +19,7 @@ export const useUpdate: (update: () => void, dependent?: Array<any>) => void = (
   }, dependent);
 };
 
-export const useGetLanguage: () => [boolean, Obj] = () => {
+export const useInit: () => [boolean, Obj] = () => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [reqData, setReqData] = useState<Obj>({});
   const { type, appid, subappid, mode, verify } = history.location.query;
@@ -37,11 +37,15 @@ export const useGetLanguage: () => [boolean, Obj] = () => {
     if (type === 'member' && mode !== 'email') {
       loginType = 'acct';
     }
-  } else if (type === 'member') {
-    getInitConfig = getMemberInitConfig;
-    isverify = verify ? '1' : '0';
-  } else if (type === 'admin') {
-    getInitConfig = getAdminInitConfig;
+  } else if (pathname === '/signUp') {
+    if (type === 'member') {
+      getInitConfig = getMemberInitConfig;
+      isverify = verify ? '1' : '0';
+    } else if (type === 'admin') {
+      getInitConfig = getAdminInitConfig;
+    }
+  } else if (pathname === '/reset') {
+    getInitConfig = () => Promise.resolve();
   }
 
   useEffect(() => {

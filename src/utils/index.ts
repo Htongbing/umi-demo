@@ -14,9 +14,13 @@ import {
 import {
   signUpMember,
   signUpAdmin,
-  sendVerificationCode,
+  sendSignUpVerificationCode,
   checkAccount,
   loginAccount,
+  checkResetAccount,
+  getMethodList,
+  sendEmailVerificationCode,
+  verifyEmailVerificationCode,
 } from '@/service/udb';
 
 declare const UDB: any;
@@ -52,6 +56,37 @@ export const usernameValidator: (rule: any, value: string) => Promise<void> = (
     return phoneNumberValidator(rule, value);
   }
   return emailValidator(rule, value);
+};
+
+export const controlButtonFunction: (
+  mode: FormConfig['type'],
+) => ControlButtonFn = mode => (form, setDisabled) => {
+  if (form) {
+    let disabled: boolean = false;
+    let validator: (rule: any, value: string) => Promise<void>;
+
+    if (mode === 'username') {
+      validator = usernameValidator;
+    } else if (mode === 'phone') {
+      validator = phoneNumberValidator;
+    } else {
+      validator = emailValidator;
+    }
+
+    validator(null, form.getFieldValue(mode as string))
+      .catch(() => (disabled = true))
+      .finally(() => setDisabled(disabled));
+  }
+};
+
+export const updateToken = (
+  params: UDBParams,
+  newParams: Record<string, string>,
+): void => {
+  Object.keys(newParams).forEach(k => {
+    const v: any = newParams[k];
+    v && (params[k as keyof UDBParams] = v);
+  });
 };
 
 export const getInputConfig: Record<
@@ -148,33 +183,16 @@ export const getMemberSignUpFormProps: (
   let sendCallback: SendCallback | undefined;
 
   if (mode && verify) {
-    controlButtonFn = (form, setDisabled) => {
-      if (form) {
-        let disabled: boolean = false;
-        let validator: (rule: any, value: string) => Promise<void>;
-
-        if (mode === 'username') {
-          validator = usernameValidator;
-        } else if (mode === 'phone') {
-          validator = phoneNumberValidator;
-        } else {
-          validator = emailValidator;
-        }
-
-        validator(null, form.getFieldValue(mode))
-          .catch(() => (disabled = true))
-          .finally(() => setDisabled(disabled));
-      }
-    };
+    controlButtonFn = controlButtonFunction(mode);
     sendCallback = formData => {
       let acct = formData[mode];
       if (CODE_PHONE_PATTERN.test(acct)) {
         acct = `${RegExp.$2}${RegExp.$3}`.replace('+', '00');
       }
       checkAccount({ ...params, acct }).then(({ stoken }) => {
-        Object.assign(params, { stoken });
-        sendVerificationCode({ acct, ...params }).then(({ stoken }) =>
-          Object.assign(params, { stoken }),
+        updateToken(params, { stoken });
+        sendSignUpVerificationCode({ acct, ...params }).then(({ stoken }) =>
+          updateToken(params, { stoken }),
         );
       });
     };
@@ -192,7 +210,7 @@ export const getMemberSignUpFormProps: (
     }
     return checkAccount({ ...params, acct: payload.acct }).then(
       ({ stoken }) => {
-        Object.assign(params, { stoken });
+        updateToken(params, { stoken });
         signUpMember({ ...payload, ...params });
       },
     );
@@ -219,7 +237,7 @@ export const getAdminSignUpFormProps: (
     };
     return checkAccount({ ...params, acct: payload.acct }).then(
       ({ stoken }) => {
-        Object.assign(params, { stoken });
+        updateToken(params, { stoken });
         signUpAdmin({ ...payload, ...params });
       },
     );
@@ -258,7 +276,6 @@ export const getAdminSignInFormProps: (
       acct: data.email,
       pwd: UDB.SDK.rsa.RSAUtils.encryptedString(data.password),
     };
-    console.log(payload);
     return loginAccount({ ...payload, ...params });
   };
   return {
@@ -284,12 +301,42 @@ export const getMemberResetFormProps: (
 });
 
 export const getAdminResetFormProps: (
-  onSubmit: () => Promise<any>,
-) => LoginFormProps = onSubmit => ({
-  config: getInputConfigHelper('email', 'code'),
-  onSubmit,
-  buttonText: LANGUAGE_KEY.confirm,
-});
+  params: UDBParams,
+  callback: () => void,
+) => LoginFormProps = (params, callback) => {
+  const controlButtonFn: ControlButtonFn = controlButtonFunction('email');
+  const sendCallback: SendCallback = async formData => {
+    const { stoken, data } = await checkResetAccount({
+      ...params,
+      account: formData.email,
+    });
+    updateToken(params, { stoken, servcode: data?.servcode });
+    const { stoken: nextStoken } = await getMethodList(params);
+    updateToken(params, { stoken: nextStoken });
+    const { stoken: lastStoken } = await sendEmailVerificationCode(params);
+    updateToken(params, { stoken: lastStoken });
+  };
+  const onSubmit = (data: Obj): Promise<any> => {
+    if (params.stoken) {
+      return verifyEmailVerificationCode({ ...params, code: data.code }).then(
+        ({ stoken, data }) => {
+          updateToken(params, { stoken, oauthToken: data?.oauthToken });
+          callback();
+        },
+      );
+    }
+    return Promise.reject();
+  };
+  return {
+    config: getInputConfigHelper('email', {
+      type: 'code',
+      controlButtonFn,
+      sendCallback,
+    }),
+    onSubmit,
+    buttonText: LANGUAGE_KEY.confirm,
+  };
+};
 
 export const getDashResetFormProps: (
   onSubmit: () => Promise<any>,

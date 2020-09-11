@@ -85,7 +85,9 @@ const SelectPhoneCountry: React.ForwardRefRenderFunction<
       onFocus={onFocus}
       onBlur={onBlur}
     >
-      {prefix && <div className={styles['code-prefix']}>{prefix}</div>}
+      {prefix && !!inputValue && (
+        <div className={styles['code-prefix']}>{prefix}</div>
+      )}
       <Input
         className={styles['select-phone-country-input']}
         ref={inputRef}

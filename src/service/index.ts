@@ -10,6 +10,7 @@ axiosInstance.interceptors.response.use(res => {
   if (data.rescode === '0') {
     return Promise.resolve(data);
   }
+  window.alert(data.resmsg);
   return Promise.reject(data);
 });
 

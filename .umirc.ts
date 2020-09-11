@@ -16,5 +16,9 @@ export default defineConfig({
       target: 'https://test-aurogon-login.yy.com/',
       changeOrigin: true,
     },
+    '/aq': {
+      target: 'https://test-aurogon-login.yy.com/',
+      changeOrigin: true,
+    },
   },
 });

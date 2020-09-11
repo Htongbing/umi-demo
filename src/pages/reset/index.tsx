@@ -11,21 +11,25 @@ import {
 import LoginForm from '@/components/LoginForm';
 import GetData from '@/components/GetData';
 
-function Reset({ isVerify, changeVerify }: GetDataComponentProps): React.ReactNode {
+function Reset({
+  isVerify,
+  changeVerify,
+  data,
+}: GetDataComponentProps): React.ReactNode {
   const { type, mode, userId } = history.location.query;
 
   let props: LoginFormProps | null = null;
 
   const onSubmit: () => Promise<void> = () =>
     new Promise(resolve => {
-      changeVerify()
+      changeVerify();
       resolve();
     });
 
   if (type === 'member') {
     props = getMemberResetFormProps(mode, onSubmit);
   } else if (type === 'admin') {
-    props = getAdminResetFormProps(onSubmit);
+    props = getAdminResetFormProps(data, () => changeVerify());
   } else if (type === 'dash') {
     props = getDashResetFormProps(onSubmit);
   }
@@ -35,4 +39,4 @@ function Reset({ isVerify, changeVerify }: GetDataComponentProps): React.ReactNo
   return props && <LoginForm {...props} />;
 }
 
-export default GetData(Reset)
+export default GetData(Reset);
