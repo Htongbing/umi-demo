@@ -1,17 +1,12 @@
 import React, { useRef, useState } from 'react';
 import styles from './index.less';
 import classnames from 'classnames';
-import { LabelInputType, FormItemProps, CODE_PHONE_PATTERN } from '@/const';
+import { LabelInputProps, CODE_PHONE_PATTERN } from '@/const';
 import { useUpdate } from '@/utils/hooks';
 
 import { Input } from 'antd';
 import SelectPhoneCountry from '@/components/SelectPhoneCountry';
 import SendCode from '@/components/SendCode';
-
-interface LabelInputProps extends FormItemProps {
-  type?: LabelInputType;
-  label?: string;
-}
 
 const LabelInput: React.FC<LabelInputProps> = ({
   type,
@@ -49,10 +44,13 @@ const LabelInput: React.FC<LabelInputProps> = ({
   let inputComponent: React.ReactNode;
   let inputing: boolean = !!value;
 
-  if (type === 'phone' && inputing) {
-    if (CODE_PHONE_PATTERN.test(value || '') && !RegExp.$3) {
-      inputing = false;
-    }
+  if (
+    type === 'phone' &&
+    inputing &&
+    CODE_PHONE_PATTERN.test(value || '') &&
+    !RegExp.$3
+  ) {
+    inputing = false;
   }
 
   props.className = classnames(props.className, {

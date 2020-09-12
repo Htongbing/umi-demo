@@ -8,6 +8,7 @@ import {
   ExtraFormConfig,
   ControlButtonFn,
   UDBParams,
+  ExtraUDBParams,
   Obj,
   SendCallback,
 } from '@/const';
@@ -103,10 +104,10 @@ export const controlButtonFunction: (
 
 export const updateToken = (
   params: UDBParams,
-  newParams: Record<string, string>,
+  newParams: ExtraUDBParams,
 ): void => {
   Object.keys(newParams).forEach(k => {
-    const v: any = newParams[k];
+    const v: any = newParams[k as keyof UDBParams];
     v && (params[k as keyof UDBParams] = v);
   });
 };
@@ -203,8 +204,6 @@ export const getInputConfig: Record<
           },
         }),
       ],
-      controlButtonFn: undefined,
-      sendCallback: undefined,
     });
   },
 };
@@ -231,10 +230,7 @@ export const getMemberSignUpFormProps: (
   if (mode && verify) {
     controlButtonFn = controlButtonFunction(mode);
     sendCallback = formData => {
-      let acct = formData[mode];
-      if (CODE_PHONE_PATTERN.test(acct)) {
-        acct = `${RegExp.$2}${RegExp.$3}`.replace('+', '00');
-      }
+      const acct = formData[mode];
       checkAccount({ ...params, acct }).then(({ stoken }) => {
         updateToken(params, { stoken });
         sendSignUpVerificationCode({ acct, ...params }).then(({ stoken }) =>
@@ -296,7 +292,7 @@ export const getAdminSignUpFormProps: (
   };
 };
 
-export const getMemberSignInFormProps: (
+export const getSignInFormProps: (
   mode: FormConfig['type'],
   params: UDBParams,
 ) => LoginFormProps = (mode, params) => {
@@ -313,29 +309,6 @@ export const getMemberSignInFormProps: (
     buttonText: LANGUAGE_KEY.signIn,
   };
 };
-
-export const getAdminSignInFormProps: (
-  params: UDBParams,
-) => LoginFormProps = params => {
-  const onSubmit: (data: Obj) => Promise<any> = data => {
-    const payload: Obj = {
-      acct: data.email,
-      pwd: encrypt(data.password),
-    };
-    return loginAccount({ ...payload, ...params });
-  };
-  return {
-    config: getInputConfigHelper('email', 'password'),
-    onSubmit,
-    buttonText: LANGUAGE_KEY.signIn,
-  };
-};
-
-export const getDashSignInFormProps: () => LoginFormProps = () => ({
-  config: getInputConfigHelper('email', 'password'),
-  onSubmit: () => new Promise(resolve => resolve()),
-  buttonText: LANGUAGE_KEY.signIn,
-});
 
 export const getAccountResetFormProps: (
   mode: FormConfig['type'],
@@ -413,7 +386,7 @@ export const getChangeFormConfig: (
   mode: FormConfig['type'],
 ) => Array<FormConfig> = mode => getInputConfigHelper(mode, 'code');
 
-export const getAdminInviteFormProps: (
+export const getInviteFormProps: (
   params: UDBParams,
 ) => LoginFormProps = params => ({
   config: getInputConfigHelper(
@@ -424,7 +397,7 @@ export const getAdminInviteFormProps: (
       rules: [
         {
           required: true,
-          message: LANGUAGE_KEY.primevalPassword,
+          message: LANGUAGE_KEY.primevalPasswordError,
         },
       ],
     },

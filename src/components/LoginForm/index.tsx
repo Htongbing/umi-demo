@@ -13,24 +13,22 @@ const generateFormItem = (
   formData: Obj,
   formInstance: FormInstance | null,
 ) =>
-  config.map(item => (
+  config.map(({ name, rules, dependencies, type, ...rest }) => (
     <Form.Item
       className={styles['login-form-item']}
-      key={item.name}
-      name={item.name}
-      rules={item.rules}
-      dependencies={item.dependencies}
+      key={name}
+      name={name}
+      rules={rules}
+      dependencies={dependencies}
     >
-      {item.type === 'username' ? (
-        <Username label={item.label} />
+      {type === 'username' ? (
+        <Username label={rest.label} />
       ) : (
         <LabelInput
-          label={item.label}
-          type={item.type}
+          type={type}
           formData={formData}
           formInstance={formInstance}
-          controlButtonFn={item.controlButtonFn}
-          sendCallback={item.sendCallback}
+          {...rest}
         />
       )}
     </Form.Item>

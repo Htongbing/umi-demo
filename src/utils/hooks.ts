@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { UDBParams, Obj } from '@/const';
+import { UDBParams } from '@/const';
 import {
   getMemberInitConfig,
   getAdminInitConfig,
@@ -20,13 +20,13 @@ export const useUpdate: (update: () => void, dependent?: Array<any>) => void = (
   }, dependent);
 };
 
-export const useInit: () => [boolean, Obj] = () => {
+export const useInit: () => [boolean, UDBParams] = () => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [reqData, setReqData] = useState<Obj>({});
+  const [reqData, setReqData] = useState<UDBParams>({});
   const { type, appid, subappid, mode, verify, token } = history.location.query;
   const { pathname } = history.location;
 
-  let getInitConfig: (params: UDBParams) => Promise<void>;
+  let getInitConfig: (params: UDBParams) => Promise<any>;
 
   let loginType: string;
 

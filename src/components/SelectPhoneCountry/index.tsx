@@ -2,7 +2,11 @@ import React, { forwardRef, useState } from 'react';
 import styles from './index.less';
 import classnames from 'classnames';
 import countries from '@/const/countries.ts';
-import { CODE_PHONE_PATTERN, defaultPhoneCode, FormItemProps } from '@/const';
+import {
+  CODE_PHONE_PATTERN,
+  DEFAULT_PHONE_CODE,
+  SelectPhoneCountryProps,
+} from '@/const';
 import '@/assets/css/countries.less';
 
 import { Select, Input } from 'antd';
@@ -51,11 +55,6 @@ const genarateOptions: Array<React.ReactNode> = countries.map(
   ),
 );
 
-interface SelectPhoneCountryProps extends FormItemProps {
-  className?: string;
-  selectorContainerClassName?: string;
-}
-
 const SelectPhoneCountry: React.ForwardRefRenderFunction<
   Input,
   SelectPhoneCountryProps
@@ -66,7 +65,7 @@ const SelectPhoneCountry: React.ForwardRefRenderFunction<
   const [prefix, setPerfix] = useState<string>('');
 
   let inputValue: string = '';
-  let selectCode: string = defaultPhoneCode;
+  let selectCode: string = DEFAULT_PHONE_CODE;
 
   const changeValue: (code: string, input: string) => void = (code, input) =>
     onChange?.(`${code}-${input}`);

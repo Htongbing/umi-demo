@@ -1,13 +1,16 @@
 import React from 'react';
-import { history } from 'umi';
 import { LoginFormProps, GetDataComponentProps } from '@/const';
 import { getMemberChangeFormProps, getChangeFormConfig } from '@/utils';
 
 import LoginForm from '@/components/LoginForm';
 import GetData from '@/components/GetData';
 
-function Change({ isVerify, changeVerify }: GetDataComponentProps): React.ReactNode {
-  const { type, mode, userId } = history.location.query;
+function Change({
+  isVerify,
+  changeVerify,
+  history,
+}: GetDataComponentProps): React.ReactNode {
+  const { type, mode } = history.location.query;
 
   let props: LoginFormProps | null = null;
 
@@ -26,4 +29,4 @@ function Change({ isVerify, changeVerify }: GetDataComponentProps): React.ReactN
   return props && <LoginForm {...props} />;
 }
 
-export default GetData(Change)
+export default GetData(Change);

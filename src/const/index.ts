@@ -8,7 +8,7 @@ export const EMAIL_PATTERN: RegExp = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-
 
 export const AXIOS_BASE_URL: string = '/';
 
-export const defaultPhoneCode: string = 'us+1';
+export const DEFAULT_PHONE_CODE: string = 'us+1';
 
 export const LOGIN_TYPE: string[] = ['member', 'admin', 'dash'];
 
@@ -34,6 +34,20 @@ export interface FormItemProps {
 
 export type LabelInputType = 'password' | 'phone' | 'code' | 'email';
 
+export interface LabelInputProps extends FormItemProps {
+  type?: LabelInputType;
+  label?: string;
+}
+
+export interface SelectPhoneCountryProps extends FormItemProps {
+  className?: string;
+  selectorContainerClassName?: string;
+}
+
+export interface UsernameProps extends FormItemProps {
+  label?: string;
+}
+
 export interface FormConfig {
   label: string;
   name: string;
@@ -44,7 +58,9 @@ export interface FormConfig {
   sendCallback?: SendCallback;
 }
 
-export type ExtraFormConfig = Record<keyof FormConfig, any>;
+export type ExtraFormConfig = {
+  [key in keyof FormConfig]: any;
+};
 
 export interface LoginFormProps {
   buttonText: string;
@@ -52,13 +68,8 @@ export interface LoginFormProps {
   onSubmit: (data: Obj) => Promise<any>;
 }
 
-export interface GetDataComponentProps extends Record<string, any> {
-  isVerify: boolean;
-  changeVerify: () => void;
-}
-
 export interface UDBParams {
-  appid: string;
+  appid?: string;
   subappid?: string;
   callback?: string;
   stoken?: string;
@@ -71,6 +82,17 @@ export interface UDBParams {
   regpwd?: string;
   token?: string;
   servcode?: string;
+  oauthToken?: string;
+}
+
+export type ExtraUDBParams = {
+  [key in keyof UDBParams]: string;
+};
+
+export interface GetDataComponentProps extends Record<string, any> {
+  isVerify: boolean;
+  changeVerify: () => void;
+  params: UDBParams;
 }
 
 export const LANGUAGE_KEY: Obj = {
@@ -90,6 +112,7 @@ export const LANGUAGE_KEY: Obj = {
   passwordError: 'Please enter at least 8 character',
   repeatPasswordError: 'The two passwords that you entered do not match',
   repeatPasswordEmptyError: 'Please confirm your password',
+  primevalPasswordError: 'Please enter the primeval password',
   send: 'Send Code',
   resend: 'Resend',
 };

@@ -1,5 +1,4 @@
 import React from 'react';
-import { history } from 'umi';
 import { LoginFormProps, GetDataComponentProps, LOGIN_TYPE } from '@/const';
 import { getAccountResetFormProps, getResetFormProps } from '@/utils';
 
@@ -9,19 +8,20 @@ import GetData from '@/components/GetData';
 function Reset({
   isVerify,
   changeVerify,
-  data,
+  params,
+  history,
 }: GetDataComponentProps): React.ReactNode {
   const { type, mode } = history.location.query;
 
   let props: LoginFormProps | null = null;
 
   if (LOGIN_TYPE.includes(type)) {
-    props = getAccountResetFormProps(mode || 'email', data, () =>
+    props = getAccountResetFormProps(mode || 'email', params, () =>
       changeVerify(),
     );
   }
 
-  props && isVerify && Object.assign(props, getResetFormProps(data));
+  props && isVerify && Object.assign(props, getResetFormProps(params));
 
   return props && <LoginForm {...props} />;
 }

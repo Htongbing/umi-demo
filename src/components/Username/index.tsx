@@ -2,31 +2,27 @@ import React, { useState, useEffect } from 'react';
 import LabelInput from '../LabelInput';
 import {
   CODE_PHONE_PATTERN,
-  defaultPhoneCode,
-  FormItemProps,
+  DEFAULT_PHONE_CODE,
+  UsernameProps,
   LabelInputType,
 } from '@/const';
 
 const isNumberReg: RegExp = /^(\d+)$/;
 
-interface UsernameProps extends FormItemProps {
-  label?: string;
-}
-
 const Username: React.FC<UsernameProps> = props => {
   const { value, onChange } = props;
-  const [type, setType] = useState<LabelInputType>();
+  const [type, setType] = useState<LabelInputType>('email');
 
   useEffect((): void => {
     if (value) {
       if (!type && isNumberReg.test(value)) {
         setType('phone');
-        onChange?.(`${defaultPhoneCode}-${value}`);
+        onChange?.(`${DEFAULT_PHONE_CODE}-${value}`);
       } else if (
         type &&
         !isNumberReg.test(CODE_PHONE_PATTERN.exec(value)?.[3] || '')
       ) {
-        setType(undefined);
+        setType('email');
         onChange?.(RegExp.$3);
       }
     }

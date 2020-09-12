@@ -6,14 +6,12 @@ import classnames from 'classnames';
 
 import { Input, Button } from 'antd';
 
-interface SendCodeProps extends FormItemProps {}
-
-const SendCode: React.ForwardRefRenderFunction<Input, SendCodeProps> = (
+const SendCode: React.ForwardRefRenderFunction<Input, FormItemProps> = (
   props,
   inputRef: React.Ref<Input>,
 ) => {
   const [timing, setTiming] = useState<number>(0);
-  const [disabled, setDisabled] = useState<boolean>(!!props.controlButtonFn);
+  const [disabled, setDisabled] = useState<boolean>(true);
 
   const text: string = timing
     ? `${LANGUAGE_KEY.resend} (${timing})`
@@ -72,4 +70,4 @@ const SendCode: React.ForwardRefRenderFunction<Input, SendCodeProps> = (
   );
 };
 
-export default forwardRef<Input, SendCodeProps>(SendCode);
+export default forwardRef<Input, FormItemProps>(SendCode);
