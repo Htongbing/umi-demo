@@ -4,7 +4,8 @@ import {
   getMemberInitConfig,
   getAdminInitConfig,
   getLoginInitConfig,
-  getInviteSignUpConfig,
+  getInviteSignUpInitConfig,
+  getBindEmailInitConfig,
 } from '@/service/udb';
 import { history } from 'umi';
 
@@ -23,7 +24,16 @@ export const useUpdate: (update: () => void, dependent?: Array<any>) => void = (
 export const useInit: () => [boolean, UDBParams] = () => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [reqData, setReqData] = useState<UDBParams>({});
-  const { type, appid, subappid, mode, verify, token } = history.location.query;
+  const {
+    type,
+    appid,
+    subappid,
+    mode,
+    verify,
+    token,
+    uid,
+    ticket,
+  } = history.location.query;
   const { pathname } = history.location;
 
   let getInitConfig: (params: UDBParams) => Promise<any>;
@@ -31,6 +41,8 @@ export const useInit: () => [boolean, UDBParams] = () => {
   let loginType: string;
 
   let isverify: '0' | '1';
+
+  let ticketType: '1';
 
   if (pathname === '/signIn') {
     getInitConfig = getLoginInitConfig;
@@ -49,8 +61,11 @@ export const useInit: () => [boolean, UDBParams] = () => {
     getInitConfig = () => Promise.resolve();
   } else if (pathname === '/invite') {
     if (type === 'admin' || type === 'dash') {
-      getInitConfig = getInviteSignUpConfig;
+      getInitConfig = getInviteSignUpInitConfig;
     }
+  } else if (pathname === '/change' && type === 'member') {
+    getInitConfig = getBindEmailInitConfig;
+    ticketType = '1';
   }
 
   useEffect(() => {
@@ -61,11 +76,15 @@ export const useInit: () => [boolean, UDBParams] = () => {
       type: loginType,
       isverify,
       token,
+      uid,
+      ticket,
+      ticketType,
     }).then((data: any): void => {
       setReqData({
         appid,
         subappid,
         stoken: data?.stoken,
+        servcode: data?.servcode,
       });
       setIsLoaded(true);
     });

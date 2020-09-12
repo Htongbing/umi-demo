@@ -11,9 +11,13 @@ export const getAdminInitConfig: (params: UDBParams) => Promise<any> = params =>
 export const getLoginInitConfig: (params: UDBParams) => Promise<any> = params =>
   axios.get('/lgn/login/init.do', { params });
 
-export const getInviteSignUpConfig: (
+export const getInviteSignUpInitConfig: (
   params: UDBParams,
 ) => Promise<any> = params => axios.get('/aq/pwd/reg/init.do', { params });
+
+export const getBindEmailInitConfig: (
+  params: UDBParams,
+) => Promise<any> = params => axios.get('/aq/email/bind/init.do', { params });
 
 export const signUpMember: (params: UDBParams) => Promise<any> = params =>
   axios.get('/reg/registermix/regcore.do', { params });

@@ -208,6 +208,20 @@ export const getInputConfig: Record<
   },
 };
 
+export const sendUniversalVerificationCode: (
+  params: UDBParams,
+) => Promise<any> = async params => {
+  const { stoken, data } = await getMethodList(params);
+  updateToken(params, { stoken });
+  const sendCodeFn: (
+    params: UDBParams,
+  ) => Promise<any> = data?.methods?.[0]?.method.includes('sms')
+    ? sendPhoneVerificationCode
+    : sendEmailVerificationCode;
+  const { stoken: lastStoken } = await sendCodeFn(params);
+  updateToken(params, { stoken: lastStoken });
+};
+
 export const getInputConfigHelper: (...args: any[]) => Array<FormConfig> = (
   ...args
 ) =>
@@ -322,17 +336,7 @@ export const getAccountResetFormProps: (
       account: formData[mode as string],
     });
     updateToken(params, { stoken, servcode: data?.servcode });
-    const { stoken: nextStoken, data: methodData } = await getMethodList(
-      params,
-    );
-    updateToken(params, { stoken: nextStoken });
-    const sendCodeFn: (
-      params: UDBParams,
-    ) => Promise<any> = methodData?.methods?.[0]?.method.includes('sms')
-      ? sendPhoneVerificationCode
-      : sendEmailVerificationCode;
-    const { stoken: lastStoken } = await sendCodeFn(params);
-    updateToken(params, { stoken: lastStoken });
+    await sendUniversalVerificationCode(params);
   };
   const onSubmit = (data: Obj): Promise<any> => {
     if (params.stoken) {
@@ -375,12 +379,20 @@ export const getResetFormProps: (
 };
 
 export const getMemberChangeFormProps: (
-  onSubmit: () => Promise<any>,
-) => LoginFormProps = onSubmit => ({
-  config: getInputConfigHelper('code'),
-  onSubmit,
-  buttonText: LANGUAGE_KEY.confirm,
-});
+  params: UDBParams,
+  callback: () => void,
+) => LoginFormProps = (params, callback) => {
+  const sendCallback: SendCallback = () =>
+    sendUniversalVerificationCode(params);
+  return {
+    config: getInputConfigHelper({
+      type: 'code',
+      sendCallback,
+    }),
+    onSubmit: () => Promise.resolve(),
+    buttonText: LANGUAGE_KEY.confirm,
+  };
+};
 
 export const getChangeFormConfig: (
   mode: FormConfig['type'],

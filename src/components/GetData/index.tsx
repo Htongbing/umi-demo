@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GetDataComponentProps, Obj, UDBParams } from '@/const';
+import { GetDataComponentProps, UDBParams } from '@/const';
 import { useInit } from '@/utils/hooks';
 import '@/assets/js/udb.sdk.rsa.js';
 

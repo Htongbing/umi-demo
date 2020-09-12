@@ -9,19 +9,14 @@ function Change({
   isVerify,
   changeVerify,
   history,
+  params,
 }: GetDataComponentProps): React.ReactNode {
   const { type, mode } = history.location.query;
 
   let props: LoginFormProps | null = null;
 
-  const onSubmit: () => Promise<void> = () =>
-    new Promise(resolve => {
-      changeVerify();
-      resolve();
-    });
-
-  if (type === 'member') {
-    props = getMemberChangeFormProps(onSubmit);
+  if (type === 'member' && ['email', 'phone'].includes(mode)) {
+    props = getMemberChangeFormProps(params, () => changeVerify());
   }
 
   props && isVerify && (props.config = getChangeFormConfig(mode));

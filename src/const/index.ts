@@ -83,6 +83,9 @@ export interface UDBParams {
   token?: string;
   servcode?: string;
   oauthToken?: string;
+  uid?: string;
+  ticket?: string;
+  ticketType?: '1';
 }
 
 export type ExtraUDBParams = {
