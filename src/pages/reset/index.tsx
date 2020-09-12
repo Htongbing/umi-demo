@@ -1,12 +1,7 @@
 import React from 'react';
 import { history } from 'umi';
-import { LoginFormProps, GetDataComponentProps } from '@/const';
-import {
-  getMemberResetFormProps,
-  getAdminResetFormProps,
-  getDashResetFormProps,
-  getResetFormConfig,
-} from '@/utils';
+import { LoginFormProps, GetDataComponentProps, LOGIN_TYPE } from '@/const';
+import { getAccountResetFormProps, getResetFormProps } from '@/utils';
 
 import LoginForm from '@/components/LoginForm';
 import GetData from '@/components/GetData';
@@ -16,25 +11,17 @@ function Reset({
   changeVerify,
   data,
 }: GetDataComponentProps): React.ReactNode {
-  const { type, mode, userId } = history.location.query;
+  const { type, mode } = history.location.query;
 
   let props: LoginFormProps | null = null;
 
-  const onSubmit: () => Promise<void> = () =>
-    new Promise(resolve => {
-      changeVerify();
-      resolve();
-    });
-
-  if (type === 'member') {
-    props = getMemberResetFormProps(mode, onSubmit);
-  } else if (type === 'admin') {
-    props = getAdminResetFormProps(data, () => changeVerify());
-  } else if (type === 'dash') {
-    props = getDashResetFormProps(onSubmit);
+  if (LOGIN_TYPE.includes(type)) {
+    props = getAccountResetFormProps(mode || 'email', data, () =>
+      changeVerify(),
+    );
   }
 
-  props && isVerify && (props.config = getResetFormConfig());
+  props && isVerify && Object.assign(props, getResetFormProps(data));
 
   return props && <LoginForm {...props} />;
 }

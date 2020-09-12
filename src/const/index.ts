@@ -10,6 +10,8 @@ export const AXIOS_BASE_URL: string = '/';
 
 export const defaultPhoneCode: string = 'us+1';
 
+export const LOGIN_TYPE: string[] = ['member', 'admin', 'dash'];
+
 export type ControlButtonFn = (
   form: FormInstance | null | undefined,
   setDisabled: React.Dispatch<React.SetStateAction<boolean>>,
@@ -65,6 +67,10 @@ export interface UDBParams {
   isverify?: '0' | '1';
   account?: string;
   code?: string;
+  pwd?: string;
+  regpwd?: string;
+  token?: string;
+  servcode?: string;
 }
 
 export const LANGUAGE_KEY: Obj = {
@@ -73,6 +79,7 @@ export const LANGUAGE_KEY: Obj = {
   username: 'Email/Phone',
   password: 'Password',
   repeatPassword: 'Repeat Password',
+  primevalPassword: 'Primeval Password',
   code: 'Verification Code',
   signUp: 'Sign Up',
   signIn: 'Sign In',

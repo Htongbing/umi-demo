@@ -21,9 +21,31 @@ import {
   getMethodList,
   sendEmailVerificationCode,
   verifyEmailVerificationCode,
+  resetPassword,
+  resetInvitePassword,
+  sendPhoneVerificationCode,
+  verifyPhoneVerificationCode,
 } from '@/service/udb';
 
 declare const UDB: any;
+
+export const encrypt = (value: string): string =>
+  UDB.SDK.rsa.RSAUtils.encryptedString(value);
+
+export const formatterFormData: (formData: Obj) => Obj = data => {
+  const result = { ...data };
+  if (data.phone || CODE_PHONE_PATTERN.test(data.username)) {
+    const exec: null | string[] = CODE_PHONE_PATTERN.exec(
+      data.phone || data.username,
+    );
+    if (exec) {
+      result[
+        data.username ? 'username' : 'phone'
+      ] = `${exec[2]}${exec[3]}`.replace('+', '00');
+    }
+  }
+  return result;
+};
 
 export const phoneNumberValidator: (
   rule: any,
@@ -161,6 +183,30 @@ export const getInputConfig: Record<
       ...config,
     };
   },
+  repeatPassword(): FormConfig {
+    return this.password({
+      type: 'password',
+      label: LANGUAGE_KEY.repeatPassword,
+      name: 'repeatPassword',
+      dependencies: ['password'],
+      rules: [
+        {
+          required: true,
+          message: LANGUAGE_KEY.repeatPasswordEmptyError,
+        },
+        ({ getFieldValue }: { getFieldValue: any }) => ({
+          validator(rule: any, value: string | undefined): Promise<void> {
+            if (!value || getFieldValue('password') === value) {
+              return Promise.resolve();
+            }
+            return Promise.reject(LANGUAGE_KEY.repeatPasswordError);
+          },
+        }),
+      ],
+      controlButtonFn: undefined,
+      sendCallback: undefined,
+    });
+  },
 };
 
 export const getInputConfigHelper: (...args: any[]) => Array<FormConfig> = (
@@ -201,7 +247,7 @@ export const getMemberSignUpFormProps: (
   const onSubmit: (data: Obj) => Promise<any> = data => {
     const payload: Obj = {
       acct: data.email || data.phone || data.username,
-      passwd: UDB.SDK.rsa.RSAUtils.encryptedString(data.password),
+      passwd: encrypt(data.password),
       verifycode: data.code,
       isverify: verify ? '1' : '0',
     };
@@ -233,7 +279,7 @@ export const getAdminSignUpFormProps: (
   const onSubmit: (data: Obj) => Promise<any> = data => {
     const payload: Obj = {
       acct: data.email,
-      passwd: UDB.SDK.rsa.RSAUtils.encryptedString(data.password),
+      passwd: encrypt(data.password),
     };
     return checkAccount({ ...params, acct: payload.acct }).then(
       ({ stoken }) => {
@@ -257,7 +303,7 @@ export const getMemberSignInFormProps: (
   const onSubmit: (data: Obj) => Promise<any> = data => {
     const payload: Obj = {
       acct: data[mode as string],
-      pwd: UDB.SDK.rsa.RSAUtils.encryptedString(data.password),
+      pwd: encrypt(data.password),
     };
     return loginAccount({ ...payload, ...params });
   };
@@ -274,7 +320,7 @@ export const getAdminSignInFormProps: (
   const onSubmit: (data: Obj) => Promise<any> = data => {
     const payload: Obj = {
       acct: data.email,
-      pwd: UDB.SDK.rsa.RSAUtils.encryptedString(data.password),
+      pwd: encrypt(data.password),
     };
     return loginAccount({ ...payload, ...params });
   };
@@ -291,34 +337,38 @@ export const getDashSignInFormProps: () => LoginFormProps = () => ({
   buttonText: LANGUAGE_KEY.signIn,
 });
 
-export const getMemberResetFormProps: (
+export const getAccountResetFormProps: (
   mode: FormConfig['type'],
-  onSubmit: () => Promise<any>,
-) => LoginFormProps = (mode, onSubmit) => ({
-  config: getInputConfigHelper(mode, 'code'),
-  onSubmit,
-  buttonText: LANGUAGE_KEY.confirm,
-});
-
-export const getAdminResetFormProps: (
   params: UDBParams,
   callback: () => void,
-) => LoginFormProps = (params, callback) => {
-  const controlButtonFn: ControlButtonFn = controlButtonFunction('email');
+) => LoginFormProps = (mode, params, callback) => {
+  const controlButtonFn: ControlButtonFn = controlButtonFunction(mode);
   const sendCallback: SendCallback = async formData => {
     const { stoken, data } = await checkResetAccount({
       ...params,
-      account: formData.email,
+      account: formData[mode as string],
     });
     updateToken(params, { stoken, servcode: data?.servcode });
-    const { stoken: nextStoken } = await getMethodList(params);
+    const { stoken: nextStoken, data: methodData } = await getMethodList(
+      params,
+    );
     updateToken(params, { stoken: nextStoken });
-    const { stoken: lastStoken } = await sendEmailVerificationCode(params);
+    const sendCodeFn: (
+      params: UDBParams,
+    ) => Promise<any> = methodData?.methods?.[0]?.method.includes('sms')
+      ? sendPhoneVerificationCode
+      : sendEmailVerificationCode;
+    const { stoken: lastStoken } = await sendCodeFn(params);
     updateToken(params, { stoken: lastStoken });
   };
   const onSubmit = (data: Obj): Promise<any> => {
     if (params.stoken) {
-      return verifyEmailVerificationCode({ ...params, code: data.code }).then(
+      const verifyCodeFn: (
+        params: UDBParams,
+      ) => Promise<any> = params.servcode?.includes('mobile')
+        ? verifyPhoneVerificationCode
+        : verifyEmailVerificationCode;
+      return verifyCodeFn({ ...params, code: data.code }).then(
         ({ stoken, data }) => {
           updateToken(params, { stoken, oauthToken: data?.oauthToken });
           callback();
@@ -328,7 +378,7 @@ export const getAdminResetFormProps: (
     return Promise.reject();
   };
   return {
-    config: getInputConfigHelper('email', {
+    config: getInputConfigHelper(mode, {
       type: 'code',
       controlButtonFn,
       sendCallback,
@@ -338,35 +388,18 @@ export const getAdminResetFormProps: (
   };
 };
 
-export const getDashResetFormProps: (
-  onSubmit: () => Promise<any>,
-) => LoginFormProps = onSubmit => ({
-  config: getInputConfigHelper('email', 'code'),
-  onSubmit,
-  buttonText: LANGUAGE_KEY.confirm,
-});
-
-export const getResetFormConfig: () => Array<FormConfig> = () =>
-  getInputConfigHelper('password', {
-    type: 'password',
-    label: LANGUAGE_KEY.repeatPassword,
-    name: 'repeatPassword',
-    dependencies: ['password'],
-    rules: [
-      {
-        required: true,
-        message: LANGUAGE_KEY.repeatPasswordEmptyError,
-      },
-      ({ getFieldValue }: { getFieldValue: any }) => ({
-        validator(rule: any, value: string | undefined): Promise<void> {
-          if (!value || getFieldValue('password') === value) {
-            return Promise.resolve();
-          }
-          return Promise.reject(LANGUAGE_KEY.repeatPasswordError);
-        },
-      }),
-    ],
-  });
+export const getResetFormProps: (
+  params: UDBParams,
+) => LoginFormProps = params => {
+  const onSubmit = (data: Obj): Promise<any> => {
+    return resetPassword({ ...params, pwd: encrypt(data.password) });
+  };
+  return {
+    config: getInputConfigHelper('password', 'repeatPassword'),
+    onSubmit,
+    buttonText: LANGUAGE_KEY.confirm,
+  };
+};
 
 export const getMemberChangeFormProps: (
   onSubmit: () => Promise<any>,
@@ -379,3 +412,30 @@ export const getMemberChangeFormProps: (
 export const getChangeFormConfig: (
   mode: FormConfig['type'],
 ) => Array<FormConfig> = mode => getInputConfigHelper(mode, 'code');
+
+export const getAdminInviteFormProps: (
+  params: UDBParams,
+) => LoginFormProps = params => ({
+  config: getInputConfigHelper(
+    {
+      type: 'password',
+      label: LANGUAGE_KEY.primevalPassword,
+      name: 'primevalPassword',
+      rules: [
+        {
+          required: true,
+          message: LANGUAGE_KEY.primevalPassword,
+        },
+      ],
+    },
+    'password',
+    'repeatPassword',
+  ),
+  onSubmit: (data: Obj): Promise<any> =>
+    resetInvitePassword({
+      ...params,
+      regpwd: data.primevalPassword,
+      pwd: encrypt(data.password),
+    }),
+  buttonText: LANGUAGE_KEY.signIn,
+});

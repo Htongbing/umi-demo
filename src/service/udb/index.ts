@@ -11,11 +11,19 @@ export const getAdminInitConfig: (params: UDBParams) => Promise<any> = params =>
 export const getLoginInitConfig: (params: UDBParams) => Promise<any> = params =>
   axios.get('/lgn/login/init.do', { params });
 
+export const getInviteSignUpConfig: (
+  params: UDBParams,
+) => Promise<any> = params => axios.get('/aq/pwd/reg/init.do', { params });
+
 export const signUpMember: (params: UDBParams) => Promise<any> = params =>
   axios.get('/reg/registermix/regcore.do', { params });
 
 export const signUpAdmin: (params: UDBParams) => Promise<any> = params =>
   axios.get('/reg/registeradmin/regcore.do', { params });
+
+export const resetInvitePassword: (
+  params: UDBParams,
+) => Promise<any> = params => axios.get('/aq/pwd/reg/modify.do', { params });
 
 export const sendSignUpVerificationCode: (
   params: UDBParams,
@@ -47,6 +55,9 @@ export const sendPhoneVerificationCode: (
 export const verifyPhoneVerificationCode: (
   params: UDBParams,
 ) => Promise<any> = params => axios.get('/aq/uni/verifySms.do', { params });
+
+export const resetPassword: (params: UDBParams) => Promise<any> = params =>
+  axios.get('/aq/pwd/retrieve/modify.do', { params });
 
 export const loginAccount: (params: UDBParams) => Promise<any> = params =>
   axios.get('/lgn/login/verify.do', { params });

@@ -1,6 +1,7 @@
 import React, { forwardRef, useState, useEffect } from 'react';
 import styles from './index.less';
 import { FormItemProps, LANGUAGE_KEY } from '@/const';
+import { formatterFormData } from '@/utils';
 import classnames from 'classnames';
 
 import { Input, Button } from 'antd';
@@ -36,7 +37,7 @@ const SendCode: React.ForwardRefRenderFunction<Input, SendCodeProps> = (
   } = props;
 
   const send: () => void = () => {
-    formData && sendCallback?.(formData);
+    formData && sendCallback?.(formatterFormData(formData));
     setTiming(60);
   };
 
