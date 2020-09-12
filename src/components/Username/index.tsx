@@ -15,11 +15,11 @@ const Username: React.FC<UsernameProps> = props => {
 
   useEffect((): void => {
     if (value) {
-      if (!type && isNumberReg.test(value)) {
+      if (type === 'email' && isNumberReg.test(value)) {
         setType('phone');
         onChange?.(`${DEFAULT_PHONE_CODE}-${value}`);
       } else if (
-        type &&
+        type === 'phone' &&
         !isNumberReg.test(CODE_PHONE_PATTERN.exec(value)?.[3] || '')
       ) {
         setType('email');
