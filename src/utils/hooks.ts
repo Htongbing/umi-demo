@@ -6,6 +6,7 @@ import {
   getLoginInitConfig,
   getInviteSignUpInitConfig,
   getBindEmailInitConfig,
+  getBindPhoneInitConfig,
 } from '@/service/udb';
 import { history } from 'umi';
 
@@ -64,7 +65,11 @@ export const useInit: () => [boolean, UDBParams] = () => {
       getInitConfig = getInviteSignUpInitConfig;
     }
   } else if (pathname === '/change' && type === 'member') {
-    getInitConfig = getBindEmailInitConfig;
+    if (mode === 'email') {
+      getInitConfig = getBindEmailInitConfig;
+    } else if (mode === 'phone') {
+      getInitConfig = getBindPhoneInitConfig;
+    }
     ticketType = '1';
   }
 
@@ -84,7 +89,7 @@ export const useInit: () => [boolean, UDBParams] = () => {
         appid,
         subappid,
         stoken: data?.stoken,
-        servcode: data?.servcode,
+        servcode: data?.data?.servcode,
       });
       setIsLoaded(true);
     });

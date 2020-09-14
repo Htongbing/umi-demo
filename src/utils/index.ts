@@ -26,6 +26,10 @@ import {
   resetInvitePassword,
   sendPhoneVerificationCode,
   verifyPhoneVerificationCode,
+  sendBindPhoneVerificationCode,
+  sendBindEmailVerificationCode,
+  verifyBindPhoneVerificationCode,
+  verifyBindEmailVerificationCode,
 } from '@/service/udb';
 
 declare const UDB: any;
@@ -222,6 +226,27 @@ export const sendUniversalVerificationCode: (
   updateToken(params, { stoken: lastStoken });
 };
 
+export const verifyUniversalVerificationCode: (
+  params: UDBParams,
+  data: Obj,
+  callback: () => void,
+) => Promise<any> = (params, data, callback) => {
+  if (params.stoken) {
+    const verifyCodeFn: (
+      params: UDBParams,
+    ) => Promise<any> = params.servcode?.includes('mobile')
+      ? verifyPhoneVerificationCode
+      : verifyEmailVerificationCode;
+    return verifyCodeFn({ ...params, code: data.code }).then(
+      ({ stoken, data }) => {
+        updateToken(params, { stoken, oauthToken: data?.oauthToken });
+        callback();
+      },
+    );
+  }
+  return Promise.reject();
+};
+
 export const getInputConfigHelper: (...args: any[]) => Array<FormConfig> = (
   ...args
 ) =>
@@ -254,7 +279,7 @@ export const getMemberSignUpFormProps: (
     };
   }
 
-  const onSubmit: (data: Obj) => Promise<any> = data => {
+  const onSubmit: LoginFormProps['onSubmit'] = data => {
     const payload: Obj = {
       acct: data.email || data.phone || data.username,
       passwd: encrypt(data.password),
@@ -286,7 +311,7 @@ export const getMemberSignUpFormProps: (
 export const getAdminSignUpFormProps: (
   params: UDBParams,
 ) => LoginFormProps = params => {
-  const onSubmit: (data: Obj) => Promise<any> = data => {
+  const onSubmit: LoginFormProps['onSubmit'] = data => {
     const payload: Obj = {
       acct: data.email,
       passwd: encrypt(data.password),
@@ -310,7 +335,7 @@ export const getSignInFormProps: (
   mode: FormConfig['type'],
   params: UDBParams,
 ) => LoginFormProps = (mode, params) => {
-  const onSubmit: (data: Obj) => Promise<any> = data => {
+  const onSubmit: LoginFormProps['onSubmit'] = data => {
     const payload: Obj = {
       acct: data[mode as string],
       pwd: encrypt(data.password),
@@ -338,29 +363,13 @@ export const getAccountResetFormProps: (
     updateToken(params, { stoken, servcode: data?.servcode });
     await sendUniversalVerificationCode(params);
   };
-  const onSubmit = (data: Obj): Promise<any> => {
-    if (params.stoken) {
-      const verifyCodeFn: (
-        params: UDBParams,
-      ) => Promise<any> = params.servcode?.includes('mobile')
-        ? verifyPhoneVerificationCode
-        : verifyEmailVerificationCode;
-      return verifyCodeFn({ ...params, code: data.code }).then(
-        ({ stoken, data }) => {
-          updateToken(params, { stoken, oauthToken: data?.oauthToken });
-          callback();
-        },
-      );
-    }
-    return Promise.reject();
-  };
   return {
     config: getInputConfigHelper(mode, {
       type: 'code',
       controlButtonFn,
       sendCallback,
     }),
-    onSubmit,
+    onSubmit: data => verifyUniversalVerificationCode(params, data, callback),
     buttonText: LANGUAGE_KEY.confirm,
   };
 };
@@ -381,22 +390,48 @@ export const getResetFormProps: (
 export const getMemberChangeFormProps: (
   params: UDBParams,
   callback: () => void,
-) => LoginFormProps = (params, callback) => {
-  const sendCallback: SendCallback = () =>
-    sendUniversalVerificationCode(params);
+) => LoginFormProps = (params, callback) => ({
+  config: getInputConfigHelper({
+    type: 'code',
+    sendCallback: () => sendUniversalVerificationCode(params),
+  }),
+  onSubmit: data => verifyUniversalVerificationCode(params, data, callback),
+  buttonText: LANGUAGE_KEY.confirm,
+});
+
+export const getChangeFormProps: (
+  params: UDBParams,
+  mode: FormConfig['type'],
+) => LoginFormProps = (params, mode) => {
+  let sendCallback: SendCallback;
+  let onSubmit: LoginFormProps['onSubmit'];
+
+  if (mode === 'phone') {
+    sendCallback = ({ phone }) =>
+      sendBindPhoneVerificationCode({ ...params, mobile: phone });
+    onSubmit = ({ phone, code }) =>
+      verifyBindPhoneVerificationCode({
+        ...params,
+        mobile: phone,
+        smscode: code,
+      });
+  } else {
+    sendCallback = ({ email }) =>
+      sendBindEmailVerificationCode({ ...params, email });
+    onSubmit = ({ email, code }) =>
+      verifyBindEmailVerificationCode({ ...params, email, emailcode: code });
+  }
+
   return {
-    config: getInputConfigHelper({
+    config: getInputConfigHelper(mode, {
       type: 'code',
+      controlButtonFn: controlButtonFunction(mode),
       sendCallback,
     }),
-    onSubmit: () => Promise.resolve(),
+    onSubmit,
     buttonText: LANGUAGE_KEY.confirm,
   };
 };
-
-export const getChangeFormConfig: (
-  mode: FormConfig['type'],
-) => Array<FormConfig> = mode => getInputConfigHelper(mode, 'code');
 
 export const getInviteFormProps: (
   params: UDBParams,

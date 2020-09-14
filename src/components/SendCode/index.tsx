@@ -11,7 +11,7 @@ const SendCode: React.ForwardRefRenderFunction<Input, FormItemProps> = (
   inputRef: React.Ref<Input>,
 ) => {
   const [timing, setTiming] = useState<number>(0);
-  const [disabled, setDisabled] = useState<boolean>(true);
+  const [disabled, setDisabled] = useState<boolean>(!!props.controlButtonFn);
 
   const text: string = timing
     ? `${LANGUAGE_KEY.resend} (${timing})`

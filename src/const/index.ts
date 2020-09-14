@@ -86,6 +86,10 @@ export interface UDBParams {
   uid?: string;
   ticket?: string;
   ticketType?: '1';
+  email?: string;
+  mobile?: string;
+  smscode?: string;
+  emailcode?: string;
 }
 
 export type ExtraUDBParams = {

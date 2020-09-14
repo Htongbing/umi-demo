@@ -1,6 +1,6 @@
 import React from 'react';
 import { LoginFormProps, GetDataComponentProps } from '@/const';
-import { getMemberChangeFormProps, getChangeFormConfig } from '@/utils';
+import { getMemberChangeFormProps, getChangeFormProps } from '@/utils';
 
 import LoginForm from '@/components/LoginForm';
 import GetData from '@/components/GetData';
@@ -19,7 +19,7 @@ function Change({
     props = getMemberChangeFormProps(params, () => changeVerify());
   }
 
-  props && isVerify && (props.config = getChangeFormConfig(mode));
+  props && isVerify && Object.assign(props, getChangeFormProps(params, mode));
 
   return props && <LoginForm {...props} />;
 }

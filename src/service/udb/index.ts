@@ -19,6 +19,10 @@ export const getBindEmailInitConfig: (
   params: UDBParams,
 ) => Promise<any> = params => axios.get('/aq/email/bind/init.do', { params });
 
+export const getBindPhoneInitConfig: (
+  params: UDBParams,
+) => Promise<any> = params => axios.get('/aq/mobile/bind/init.do', { params });
+
 export const signUpMember: (params: UDBParams) => Promise<any> = params =>
   axios.get('/reg/registermix/regcore.do', { params });
 
@@ -39,6 +43,24 @@ export const checkAccount: (params: UDBParams) => Promise<any> = params =>
 
 export const checkResetAccount: (params: UDBParams) => Promise<any> = params =>
   axios.get('/aq/pwd/retrieve/prechk.do', { params });
+
+export const sendBindEmailVerificationCode: (
+  params: UDBParams,
+) => Promise<any> = params =>
+  axios.get('/aq/email/bind/sendCode.do', { params });
+
+export const verifyBindEmailVerificationCode: (
+  params: UDBParams,
+) => Promise<any> = params => axios.get('/aq/email/bind/bind.do', { params });
+
+export const sendBindPhoneVerificationCode: (
+  params: UDBParams,
+) => Promise<any> = params =>
+  axios.get('/aq/mobile/bind/sendSms.do', { params });
+
+export const verifyBindPhoneVerificationCode: (
+  params: UDBParams,
+) => Promise<any> = params => axios.get('/aq/mobile/bind/bind.do', { params });
 
 export const getMethodList: (params: UDBParams) => Promise<any> = params =>
   axios.get('/aq/uni/getMethodList.do', { params });
