@@ -90,6 +90,7 @@ export interface UDBParams {
   mobile?: string;
   smscode?: string;
   emailcode?: string;
+  _method?: string;
 }
 
 export type ExtraUDBParams = {

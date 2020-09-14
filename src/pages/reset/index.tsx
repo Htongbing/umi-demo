@@ -11,12 +11,12 @@ function Reset({
   params,
   history,
 }: GetDataComponentProps): React.ReactNode {
-  const { type, mode } = history.location.query;
+  const { type, mode, uid } = history.location.query;
 
   let props: LoginFormProps | null = null;
 
   if (LOGIN_TYPE.includes(type)) {
-    props = getAccountResetFormProps(mode || 'email', params, () =>
+    props = getAccountResetFormProps(!uid && (mode || 'email'), params, () =>
       changeVerify(),
     );
   }

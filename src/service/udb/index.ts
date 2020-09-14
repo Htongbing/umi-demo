@@ -23,6 +23,10 @@ export const getBindPhoneInitConfig: (
   params: UDBParams,
 ) => Promise<any> = params => axios.get('/aq/mobile/bind/init.do', { params });
 
+export const getChangePasswordInitConfig: (
+  params: UDBParams,
+) => Promise<any> = params => axios.get('/aq/pwd/change/init.do', { params });
+
 export const signUpMember: (params: UDBParams) => Promise<any> = params =>
   axios.get('/reg/registermix/regcore.do', { params });
 
@@ -61,6 +65,10 @@ export const sendBindPhoneVerificationCode: (
 export const verifyBindPhoneVerificationCode: (
   params: UDBParams,
 ) => Promise<any> = params => axios.get('/aq/mobile/bind/bind.do', { params });
+
+export const changeAccountPassword: (
+  params: UDBParams,
+) => Promise<any> = params => axios.get('/aq/pwd/change/modify.do', { params });
 
 export const getMethodList: (params: UDBParams) => Promise<any> = params =>
   axios.get('/aq/uni/getMethodList.do', { params });

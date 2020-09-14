@@ -30,6 +30,7 @@ import {
   sendBindEmailVerificationCode,
   verifyBindPhoneVerificationCode,
   verifyBindEmailVerificationCode,
+  changeAccountPassword,
 } from '@/service/udb';
 
 declare const UDB: any;
@@ -217,11 +218,11 @@ export const sendUniversalVerificationCode: (
 ) => Promise<any> = async params => {
   const { stoken, data } = await getMethodList(params);
   updateToken(params, { stoken });
-  const sendCodeFn: (
-    params: UDBParams,
-  ) => Promise<any> = data?.methods?.[0]?.method.includes('sms')
+  const method = data?.methods?.[0]?.method;
+  const sendCodeFn: (params: UDBParams) => Promise<any> = method.includes('sms')
     ? sendPhoneVerificationCode
     : sendEmailVerificationCode;
+  updateToken(params, { _method: method });
   const { stoken: lastStoken } = await sendCodeFn(params);
   updateToken(params, { stoken: lastStoken });
 };
@@ -234,7 +235,7 @@ export const verifyUniversalVerificationCode: (
   if (params.stoken) {
     const verifyCodeFn: (
       params: UDBParams,
-    ) => Promise<any> = params.servcode?.includes('mobile')
+    ) => Promise<any> = params._method?.includes('sms')
       ? verifyPhoneVerificationCode
       : verifyEmailVerificationCode;
     return verifyCodeFn({ ...params, code: data.code }).then(
@@ -354,15 +355,23 @@ export const getAccountResetFormProps: (
   params: UDBParams,
   callback: () => void,
 ) => LoginFormProps = (mode, params, callback) => {
-  const controlButtonFn: ControlButtonFn = controlButtonFunction(mode);
-  const sendCallback: SendCallback = async formData => {
-    const { stoken, data } = await checkResetAccount({
-      ...params,
-      account: formData[mode as string],
-    });
-    updateToken(params, { stoken, servcode: data?.servcode });
-    await sendUniversalVerificationCode(params);
-  };
+  let controlButtonFn: ControlButtonFn | undefined;
+  let sendCallback: SendCallback;
+
+  if (!mode) {
+    sendCallback = () => sendUniversalVerificationCode(params);
+    params._method = 'change';
+  } else {
+    controlButtonFn = controlButtonFunction(mode);
+    sendCallback = async formData => {
+      const { stoken, data } = await checkResetAccount({
+        ...params,
+        account: formData[mode as string],
+      });
+      updateToken(params, { stoken, servcode: data?.servcode });
+      await sendUniversalVerificationCode(params);
+    };
+  }
   return {
     config: getInputConfigHelper(mode, {
       type: 'code',
@@ -378,7 +387,13 @@ export const getResetFormProps: (
   params: UDBParams,
 ) => LoginFormProps = params => {
   const onSubmit = (data: Obj): Promise<any> => {
-    return resetPassword({ ...params, pwd: encrypt(data.password) });
+    const payload = {
+      ...params,
+      pwd: encrypt(data.password),
+    };
+    return params._method === 'change'
+      ? changeAccountPassword(payload)
+      : resetPassword(payload);
   };
   return {
     config: getInputConfigHelper('password', 'repeatPassword'),
@@ -408,23 +423,33 @@ export const getChangeFormProps: (
 
   if (mode === 'phone') {
     sendCallback = ({ phone }) =>
-      sendBindPhoneVerificationCode({ ...params, mobile: phone });
-    onSubmit = ({ phone, code }) =>
+      sendBindPhoneVerificationCode({
+        ...params,
+        mobile: phone,
+      }).then(({ stoken }) => updateToken(params, { stoken }));
+    onSubmit = ({ phone, nextCode }) =>
       verifyBindPhoneVerificationCode({
         ...params,
         mobile: phone,
-        smscode: code,
+        smscode: nextCode,
       });
   } else {
     sendCallback = ({ email }) =>
-      sendBindEmailVerificationCode({ ...params, email });
-    onSubmit = ({ email, code }) =>
-      verifyBindEmailVerificationCode({ ...params, email, emailcode: code });
+      sendBindEmailVerificationCode({ ...params, email }).then(({ stoken }) =>
+        updateToken(params, { stoken }),
+      );
+    onSubmit = ({ email, nextCode }) =>
+      verifyBindEmailVerificationCode({
+        ...params,
+        email,
+        emailcode: nextCode,
+      });
   }
 
   return {
     config: getInputConfigHelper(mode, {
       type: 'code',
+      name: 'nextCode',
       controlButtonFn: controlButtonFunction(mode),
       sendCallback,
     }),

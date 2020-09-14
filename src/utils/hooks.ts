@@ -7,6 +7,7 @@ import {
   getInviteSignUpInitConfig,
   getBindEmailInitConfig,
   getBindPhoneInitConfig,
+  getChangePasswordInitConfig,
 } from '@/service/udb';
 import { history } from 'umi';
 
@@ -59,7 +60,12 @@ export const useInit: () => [boolean, UDBParams] = () => {
       getInitConfig = getAdminInitConfig;
     }
   } else if (pathname === '/reset') {
-    getInitConfig = () => Promise.resolve();
+    if (uid) {
+      getInitConfig = getChangePasswordInitConfig;
+      ticketType = '1';
+    } else {
+      getInitConfig = () => Promise.resolve();
+    }
   } else if (pathname === '/invite') {
     if (type === 'admin' || type === 'dash') {
       getInitConfig = getInviteSignUpInitConfig;
