@@ -107,6 +107,8 @@ const SelectPhoneCountry: React.ForwardRefRenderFunction<
           setPerfix(CODE_PHONE_PATTERN.exec(`${code}-`)?.[2] || '');
           changeValue(code, inputValue);
         }}
+        dropdownClassName={styles['select-phone-dropdown']}
+        listHeight={120}
       >
         {genarateOptions}
       </Select>
