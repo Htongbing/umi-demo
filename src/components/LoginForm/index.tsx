@@ -55,14 +55,15 @@ const LoginForm: React.FC<LoginFormProps> = ({
 
   useEffect(() => {
     if (containerRef.current) {
-      const observer = new MutationObserver(() =>
-        EventBus.emit('resize', containerRef.current?.offsetHeight),
-      );
+      const resizeCallback: () => void = () =>
+        EventBus.emit('resize', containerRef.current?.offsetHeight);
+      const observer = new MutationObserver(resizeCallback);
       observer.observe(containerRef.current, {
         childList: true,
         subtree: true,
       });
-      EventBus.emit('resize', containerRef.current?.offsetHeight);
+      resizeCallback();
+      return () => observer.disconnect();
     }
   }, []);
 
