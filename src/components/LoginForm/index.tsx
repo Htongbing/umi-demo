@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './index.less';
 import { FormConfig, LoginFormProps, Obj } from '@/const';
 import { formatterFormData } from '@/utils';
+import EventBus from '@/utils/postMessage';
 import { FormInstance } from 'antd/es/form';
 
 import { Form, Button } from 'antd';
@@ -43,6 +44,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
   const [formData, setFormData] = useState<Obj>({});
 
   const formRef = useRef<FormInstance>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const onFinish: (data: Obj) => void = data => {
     setLoading(true);
@@ -51,8 +53,21 @@ const LoginForm: React.FC<LoginFormProps> = ({
       .finally(() => setLoading(false));
   };
 
+  useEffect(() => {
+    if (containerRef.current) {
+      const observer = new MutationObserver(() =>
+        EventBus.emit('resize', containerRef.current?.offsetHeight),
+      );
+      observer.observe(containerRef.current, {
+        childList: true,
+        subtree: true,
+      });
+      EventBus.emit('resize', containerRef.current?.offsetHeight);
+    }
+  }, []);
+
   return (
-    <div className={styles['login-form-container']}>
+    <div className={styles['login-form-container']} ref={containerRef}>
       <Form
         className={styles['login-form']}
         ref={formRef}

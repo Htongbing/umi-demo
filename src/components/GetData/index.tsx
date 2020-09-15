@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GetDataComponentProps, UDBParams } from '@/const';
 import { useInit } from '@/utils/hooks';
 import '@/assets/js/udb.sdk.rsa.js';
+import '@/utils/postMessage';
 
 function GetData(
   Component: (props: GetDataComponentProps) => React.ReactNode,
